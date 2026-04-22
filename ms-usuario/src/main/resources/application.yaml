@@ -1,9 +1,9 @@
 spring:
   application:
-    name: ms-juego
+    name: ms-usuario
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/db_juegos
+    url: jdbc:postgresql://localhost:5432/db_usuarios
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: 1234
@@ -30,4 +30,4 @@ logging:
     org.flywaydb: DEBUG
 
 server:
-  port: 8080
+  port: 8081

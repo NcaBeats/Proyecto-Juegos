@@ -1,6 +1,5 @@
 package com.app.msusuario.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,7 +18,4 @@ public class Usuario {
 
     @Column(nullable = false)
     private String nombre;
-
-    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private Perfil perfil;
 }

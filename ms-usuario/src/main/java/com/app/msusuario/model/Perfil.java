@@ -1,6 +1,5 @@
 package com.app.msusuario.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,8 +18,4 @@ public class Perfil {
 
     @Column(nullable = false)
     private Boolean activo;
-
-    @OneToOne()
-    @JoinColumn(name = "usuario_id",unique = true)
-    private Usuario usuario;
 }

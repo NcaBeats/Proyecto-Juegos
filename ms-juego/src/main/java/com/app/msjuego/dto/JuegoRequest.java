@@ -1,13 +1,22 @@
 package com.app.msjuego.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
+
+import java.math.BigDecimal;
 
 @Builder
 public record JuegoRequest(
         @NotBlank(message = "El nombre del juego es obligatorio")
         @Size(max = 50, message = "El nombre del juego no puede tener más de 50 caracteres")
-        String nombre
+        String nombre,
+        @NotBlank(message = "La descripción no puede estar vacía")
+        String descripcion,
+        @NotNull(message = "El precio es obligatorio")
+        @Min(value = 0, message = "El precio no puede ser negativo")
+        BigDecimal precio
 ) {
 }

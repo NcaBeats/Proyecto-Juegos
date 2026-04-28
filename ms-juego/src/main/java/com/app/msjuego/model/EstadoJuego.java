@@ -3,5 +3,5 @@ package com.app.msjuego.model;
 public enum EstadoJuego {
     PROXIMAMENTE,
     ACTIVO,
-    NODISPONIBLE
+    NO_DISPONIBLE
 }

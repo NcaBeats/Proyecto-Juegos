@@ -1,12 +1,11 @@
 package com.app.msjuego.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import com.app.msjuego.model.EstadoJuego;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Builder
 public record JuegoRequest(
@@ -16,7 +15,11 @@ public record JuegoRequest(
         @NotBlank(message = "La descripción no puede estar vacía")
         String descripcion,
         @NotNull(message = "El precio es obligatorio")
-        @Min(value = 0, message = "El precio no puede ser negativo")
-        BigDecimal precio
+        @PositiveOrZero(message = "El precio debe ser 0 o superior")
+        BigDecimal precio,
+        @NotNull(message = "La fecha de lanzamiento es obligatoria")
+        LocalDate fechaLanzamiento,
+        @NotBlank(message = "El estado es obligatorio")
+        EstadoJuego estado
 ) {
 }

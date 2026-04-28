@@ -5,6 +5,8 @@ import com.app.msjuego.dto.JuegoResponse;
 import com.app.msjuego.service.JuegoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,11 @@ public class JuegoController {
     @GetMapping("/{id}")
     public ResponseEntity<JuegoResponse> findById (@Valid @PathVariable Long id){
         return ResponseEntity.ok(juegoService.findById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<JuegoResponse>> findAll(Pageable pageable) {
+        return ResponseEntity.ok(juegoService.findAll(pageable));
     }
 
     @GetMapping("/buscar")

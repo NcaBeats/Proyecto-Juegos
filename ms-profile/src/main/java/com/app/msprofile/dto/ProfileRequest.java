@@ -1,5 +1,6 @@
 package com.app.msprofile.dto;
 
+import com.app.msprofile.model.TipoPerfil;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -17,6 +18,9 @@ public record ProfileRequest(
         String avatar,
 
         @Size(max = 150)
-        String bio
+        String bio,
+
+        @NotNull
+        TipoPerfil tipoPerfil
 ) {
 }

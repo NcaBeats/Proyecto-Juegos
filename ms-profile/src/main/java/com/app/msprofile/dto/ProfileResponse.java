@@ -10,5 +10,8 @@ public record ProfileResponse(
         String nickname,
         String avatar,
         String bio,
-        Instant fecha_registro) {
+        Instant fecha_registro,
+        String username,
+        String email
+) {
 }

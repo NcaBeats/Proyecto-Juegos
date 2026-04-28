@@ -29,7 +29,10 @@ public class Profile {
     @Column(nullable = true,length = 150)
     private String bio;
 
+    @Column(nullable = false)
+    private TipoPerfil tipoPerfil;
+
     @CreatedDate
     @Column(nullable = false)
-    private Instant fecha_registro;
+    private Instant fechaRegistro;
 }

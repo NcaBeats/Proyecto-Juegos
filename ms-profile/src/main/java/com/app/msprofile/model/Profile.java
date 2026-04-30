@@ -19,6 +19,7 @@ public class Profile {
 
     @Id
     @Setter(AccessLevel.NONE)
+    @Column(nullable = false,unique = true)
     private Long userId;
 
     @Column(unique = true, nullable = false,length = 30)

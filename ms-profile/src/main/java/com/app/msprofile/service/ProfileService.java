@@ -21,6 +21,7 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final ProfileMapper profileMapper;
     private final UserClient userClient;
+
  // Posible problema de n+1 query, pero se dejará por simplicidad del proyecto
     public Page<ProfileResponse> findAll (Pageable pageable) {
         return profileRepository.findAll(pageable).map(profile -> {
@@ -29,25 +30,35 @@ public class ProfileService {
         });
     }
 
-    public ProfileResponse findById (Long userId) {
-        Profile profile = profileRepository.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException("Perfil no encontrado con el id: " + userId));
-        UserResponse userResponse = userClient.findById(userId);
-        return profileMapper.toResponse(profile, userResponse);
+    public Page<ProfileResponse> findByFiltros(Long userId,String nickname,Pageable pageable) {
+        return profileRepository.findByFiltros(userId,nickname,pageable).map(profile -> {
+            UserResponse userResponse = userClient.findById(profile.getUserId());
+            return profileMapper.toResponse(profile, userResponse);
+        });
     }
 
-    public ProfileResponse findByNickname (String nickname) {
-        Profile profile = profileRepository.findByNickname(nickname).orElseThrow(() -> new EntityNotFoundException("Perfil no encontrado con el nickname: " + nickname));
-        UserResponse userResponse = userClient.findById(profile.getUserId());
-        return profileMapper.toResponse(profile, userResponse);
-    }
     @Transactional
     public ProfileResponse save (ProfileRequest profileRequest) {
-        // Verificar que el usuario exista en el servicio ms-usuario (dejar que las excepciones de Feign propaguen)
+        if (profileRepository.existsByUserId(profileRequest.userId())){
+            throw new IllegalStateException("Ya existe un perfil con el id: " + profileRequest.userId());
+        }
         UserResponse userResponse = userClient.findById(profileRequest.userId());
+        Profile profile = profileMapper.toEntity(profileRequest);
+        Profile profileSaved = profileRepository.save(profile);
+        return profileMapper.toResponse(profileSaved,userResponse);
+    }
 
-        // Mapear, guardar y devolver
-        Profile profile = profileMapper.toEntity(profileRequest, userResponse);
-        Profile saved = profileRepository.save(profile);
-        return profileMapper.toResponse(saved, userResponse);
+    @Transactional
+    public ProfileResponse update (ProfileRequest profileRequest){
+        UserResponse userResponse = userClient.findById(profileRequest.userId());
+        Profile profile = profileRepository.findByUserId(userResponse.id()).orElseThrow( ()-> new EntityNotFoundException("Perfil no encontrado con el id del usuario: " + userResponse.id()) );
+        profile.update(profileRequest);
+        return profileMapper.toResponse(profile,userResponse);
+    }
+
+    @Transactional
+    public void delete (Long userId){
+        Profile profile = profileRepository.findByUserId(userId).orElseThrow( ()-> new EntityNotFoundException("Perfil no encontrado con el id del usuario: " + userId) );
+        profileRepository.delete(profile);
     }
 }

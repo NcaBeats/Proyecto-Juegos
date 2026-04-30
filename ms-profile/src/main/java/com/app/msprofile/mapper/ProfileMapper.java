@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ProfileMapper {
-    public Profile toEntity(ProfileRequest request, UserResponse userResponse){
+    public Profile toEntity(ProfileRequest request){
         return Profile.builder()
-                .userId(userResponse.id())
+                .userId(request.userId())
                 .nickname(request.nickname())
                 .avatar(request.avatar())
                 .bio(request.bio())

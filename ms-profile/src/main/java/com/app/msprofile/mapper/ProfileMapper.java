@@ -24,7 +24,7 @@ public class ProfileMapper {
                 .avatar(profile.getAvatar())
                 .bio(profile.getBio())
                 .fecha_registro(profile.getFechaRegistro())
-                .username(userResponse.username())
+                .username(userResponse.nombre())
                 .email(userResponse.email())
                 .build();
     }

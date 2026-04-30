@@ -1,5 +1,6 @@
 package com.app.msprofile.model;
 
+import com.app.msprofile.dto.ProfileRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -7,7 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.Instant;
 
 @Entity
-@Table(name = "profiles")
+@Table(name = "profile")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -35,4 +36,11 @@ public class Profile {
     @CreatedDate
     @Column(nullable = false)
     private Instant fechaRegistro;
+
+    public void update (ProfileRequest request) {
+        this.nickname = request.nickname();
+        this.avatar = request.avatar();
+        this.bio = request.bio();
+        this.tipoPerfil = request.tipoPerfil();
+    }
 }

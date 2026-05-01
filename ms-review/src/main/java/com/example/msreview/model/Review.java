@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Instant;
+
 @Entity
 @Table(name = "review")
 @AllArgsConstructor
@@ -30,4 +32,7 @@ public class Review {
 
     @Column(nullable = false)
     private Rating rating;
+
+    @Column(nullable = false)
+    private Instant fechaCreacion;
 }

@@ -34,8 +34,8 @@ public class UsuarioService {
     @Transactional
     public UsuarioResponse save (UsuarioRequest usuarioRequest) {
         Usuario usuario = usuarioMapper.toEntity(usuarioRequest);
-        usuarioRepository.save(usuario);
-        return usuarioMapper.toResponse(usuario);
+        Usuario userSaved = usuarioRepository.save(usuario);
+        return usuarioMapper.toResponse(userSaved);
     }
     @Transactional
     public UsuarioResponse update(Long id,UsuarioRequest usuarioRequest) {

@@ -22,6 +22,7 @@
   <modules>
     <module>ms-juego</module>
     <module>ms-usuario</module>
+    <module>ms-profile</module>
   </modules>
 
 <dependencyManagement>

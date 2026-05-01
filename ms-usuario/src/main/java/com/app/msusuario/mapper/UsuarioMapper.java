@@ -19,7 +19,7 @@ public class UsuarioMapper {
                 .id(usuario.getId())
                 .nombre(usuario.getNombre())
                 .email(usuario.getEmail())
-                .fecha_registro(usuario.getFecha_registro())
+                .fecha_registro(usuario.getFecha_creacion())
                 .build();
     }
 }

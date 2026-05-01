@@ -29,7 +29,7 @@ public class Usuario {
 
     @CreatedDate
     @Column(nullable = false)
-    private Instant fecha_registro;
+    private Instant fecha_creacion;
 
     public void update(UsuarioRequest request){
         this.nombre = request.nombre();

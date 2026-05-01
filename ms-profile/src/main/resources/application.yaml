@@ -3,7 +3,7 @@ spring:
     name: ms-profile
 
   datasource:
-    url:  jdbc:h2:mem:db_usuarios
+    url:  jdbc:h2:mem:db_profiles
     driver-class-name: org.h2.Driver
     username: postgres
     password: 1234

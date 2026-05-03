@@ -30,6 +30,12 @@ public class ProfileService {
         });
     }
 
+    public ProfileResponse findById (Long id) {
+        Profile profile = profileRepository.findById(id).orElseThrow( ()-> new EntityNotFoundException("Perfil no encontrado con el id: " + id) );
+        UserResponse userResponse = userClient.findById(profile.getUserId());
+        return profileMapper.toResponse(profile, userResponse);
+    }
+
     public Page<ProfileResponse> findByFiltros(Long userId,String nickname,Pageable pageable) {
         return profileRepository.findByFiltros(userId,nickname,pageable).map(profile -> {
             UserResponse userResponse = userClient.findById(profile.getUserId());

@@ -23,6 +23,7 @@
     <module>ms-juego</module>
     <module>ms-usuario</module>
     <module>ms-profile</module>
+    <module>ms-review</module>
   </modules>
 
 <dependencyManagement>

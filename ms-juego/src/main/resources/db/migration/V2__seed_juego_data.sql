@@ -1,2 +1,7 @@
-INSERT INTO juego (nombre)
-VALUES ('Minecraft'),('FIFA');
+INSERT INTO juego (nombre, descripcion, precio, fecha_lanzamiento, estado, fecha_registro) VALUES
+                                                                                              ('The Witcher 3', 'RPG de mundo abierto con historia profunda', 29.99, DATE '2015-05-19', 'ACTIVO', CURRENT_TIMESTAMP),
+                                                                                              ('Cyberpunk 2077', 'Juego futurista de acción y rol', 49.99, DATE '2020-12-10', 'ACTIVO', CURRENT_TIMESTAMP),
+                                                                                              ('Elden Ring', 'RPG de acción con mundo abierto desafiante', 59.99, DATE '2022-02-25', 'ACTIVO', CURRENT_TIMESTAMP),
+                                                                                              ('God of War', 'Aventura épica basada en la mitología nórdica', 39.99, DATE '2018-04-20', 'ACTIVO', CURRENT_TIMESTAMP),
+                                                                                              ('Hollow Knight', 'Metroidvania indie con gran dificultad', 14.99, DATE '2017-02-24', 'ACTIVO', CURRENT_TIMESTAMP),
+                                                                                              ('Red Dead Redemption 2', 'Mundo abierto en el viejo oeste', 59.99, DATE '2018-10-26', 'ACTIVO', CURRENT_TIMESTAMP);

@@ -24,6 +24,7 @@
     <module>ms-usuario</module>
     <module>ms-profile</module>
     <module>ms-review</module>
+    <module>ms-wishlist</module>
   </modules>
 
 <dependencyManagement>

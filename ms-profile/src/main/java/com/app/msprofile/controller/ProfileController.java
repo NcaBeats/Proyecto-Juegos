@@ -22,6 +22,11 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.findAll(pageable));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ProfileResponse> findById (@PathVariable long id) {
+        return ResponseEntity.ok(profileService.findById(id));
+    }
+
     @GetMapping("/buscar")
     public ResponseEntity<Page<ProfileResponse>> buscar(
             @RequestParam(required = false) Long userId,

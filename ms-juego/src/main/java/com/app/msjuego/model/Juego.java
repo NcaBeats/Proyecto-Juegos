@@ -28,6 +28,7 @@ public class Juego {
     private String descripcion;
     @Column(nullable = false)
     private BigDecimal precio;
+    @Column(nullable = false)
     private LocalDate fechaLanzamiento;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

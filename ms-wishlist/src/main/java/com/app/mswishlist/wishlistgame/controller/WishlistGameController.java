@@ -25,9 +25,9 @@ public class WishlistGameController {
     public ResponseEntity<WishlistGameResponse> addGame(@RequestBody @Valid WishlistGameRequest wishlistGameRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(wishlistGameService.addGame(wishlistGameRequest));
     }
-    @DeleteMapping
-    public ResponseEntity<Void> deleteGame(@RequestBody @Valid WishlistGameRequest wishlistGameRequest) {
-        wishlistGameService.deleteGame(wishlistGameRequest);
+    @DeleteMapping("/{userId}/{gameId}")
+    public ResponseEntity<Void> deleteGame(@PathVariable Long userId, @PathVariable Long gameId) {
+        wishlistGameService.deleteGame(userId,gameId);
         return ResponseEntity.noContent().build();
     }
 }

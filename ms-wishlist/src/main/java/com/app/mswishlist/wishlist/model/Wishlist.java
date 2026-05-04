@@ -1,6 +1,5 @@
 package com.app.mswishlist.wishlist.model;
 
-import com.app.mswishlist.wishlistgame.dto.WishlistGameRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

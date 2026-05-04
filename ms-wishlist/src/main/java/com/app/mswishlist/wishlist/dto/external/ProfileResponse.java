@@ -4,6 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record ProfileResponse(
-        Long userId,
-        String nickname) {
+        Long userId
+) {
 }

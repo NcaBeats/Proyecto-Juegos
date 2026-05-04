@@ -32,9 +32,7 @@ public class Purchase {
     @Setter(AccessLevel.NONE)
     @Column(nullable = false)
     private Instant fechaRegistro;
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoCompra estado;
-
-
-
 }

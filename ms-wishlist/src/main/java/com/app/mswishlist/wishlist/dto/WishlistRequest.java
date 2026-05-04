@@ -1,4 +1,4 @@
-package com.app.mswishlist.dto;
+package com.app.mswishlist.wishlist.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;

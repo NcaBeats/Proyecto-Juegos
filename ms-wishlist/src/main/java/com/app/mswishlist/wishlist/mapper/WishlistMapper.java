@@ -1,10 +1,10 @@
-package com.app.mswishlist.mapper;
+package com.app.mswishlist.wishlist.mapper;
 
-import com.app.mswishlist.dto.WishlistRequest;
-import com.app.mswishlist.dto.WishlistResponse;
-import com.app.mswishlist.dto.external.JuegoResponse;
-import com.app.mswishlist.dto.external.ProfileResponse;
-import com.app.mswishlist.model.Wishlist;
+import com.app.mswishlist.wishlist.dto.WishlistRequest;
+import com.app.mswishlist.wishlist.dto.WishlistResponse;
+import com.app.mswishlist.wishlist.dto.external.JuegoResponse;
+import com.app.mswishlist.wishlist.dto.external.ProfileResponse;
+import com.app.mswishlist.wishlist.model.Wishlist;
 import org.springframework.stereotype.Component;
 
 @Component

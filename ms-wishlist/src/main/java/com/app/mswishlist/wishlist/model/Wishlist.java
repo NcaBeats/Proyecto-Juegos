@@ -1,5 +1,6 @@
-package com.app.mswishlist.model;
+package com.app.mswishlist.wishlist.model;
 
+import com.app.mswishlist.wishlistgame.dto.WishlistGameRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,15 +17,10 @@ import java.time.Instant;
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 public class Wishlist {
-
     @Id
     @Column(nullable = false)
     @Setter(AccessLevel.NONE)
     private Long userId;
-
-    @Column(nullable = false)
-    @Setter(AccessLevel.NONE)
-    private Long gameId;
 
     @CreatedDate
     @Column(nullable = false)

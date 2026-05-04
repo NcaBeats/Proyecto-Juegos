@@ -1,6 +1,6 @@
-package com.app.mswishlist.client;
+package com.app.mswishlist.wishlist.client;
 
-import com.app.mswishlist.dto.external.JuegoResponse;
+import com.app.mswishlist.wishlist.dto.external.JuegoResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 

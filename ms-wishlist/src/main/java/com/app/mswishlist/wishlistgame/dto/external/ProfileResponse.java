@@ -1,4 +1,4 @@
-package com.app.mswishlist.dto.external;
+package com.app.mswishlist.wishlistgame.dto.external;
 
 import lombok.Builder;
 

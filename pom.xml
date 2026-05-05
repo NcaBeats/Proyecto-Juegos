@@ -25,6 +25,7 @@
     <module>ms-profile</module>
     <module>ms-review</module>
     <module>ms-wishlist</module>
+    <module>ms-notification</module>
   </modules>
 
 <dependencyManagement>

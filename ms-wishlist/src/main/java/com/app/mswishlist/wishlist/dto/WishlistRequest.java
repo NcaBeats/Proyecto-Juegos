@@ -7,5 +7,6 @@ import lombok.Builder;
 public record WishlistRequest(
         @NotNull(message = "El campo userId no puede ser nulo")
         Long userId
+        // la lista se inicia vacia por lo que no importa no mandarlo
 ) {
 }

@@ -11,5 +11,6 @@ public record NotificationResponse(
         Long userId,
         String message,
         TipoNotification tipo,
+        Long gameId,
         Instant fechaCreacion) {
 }

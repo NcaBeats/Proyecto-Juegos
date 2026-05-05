@@ -12,6 +12,8 @@ public record NotificationRequest(
         @NotBlank(message = "El campo message no puede estar vacío")
         String message,
         @NotNull(message = "El campo tipo no puede ser nulo")
-        TipoNotification tipo
+        TipoNotification tipo,
+        @NotNull(message = "El campo gameId no puede ser nulo")
+        Long gameId
 ) {
 }

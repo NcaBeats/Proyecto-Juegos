@@ -12,6 +12,7 @@ public class NotificationMapper {
                 .userId(request.userId())
                 .message(request.message())
                 .tipo(request.tipo())
+                .gameId(request.gameId())
                 .build();
     }
     public NotificationResponse toResponse(Notification notification) {
@@ -20,6 +21,7 @@ public class NotificationMapper {
                 .userId(notification.getUserId())
                 .message(notification.getMessage())
                 .tipo(notification.getTipo())
+                .gameId(notification.getGameId())
                 .fechaCreacion(notification.getFechaCreacion())
                 .build();
     }

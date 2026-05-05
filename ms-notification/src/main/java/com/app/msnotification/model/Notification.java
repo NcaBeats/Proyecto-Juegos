@@ -29,6 +29,9 @@ public class Notification {
     @Column(nullable = false)
     private TipoNotification tipo;
 
+    @Column(nullable = false)
+    private Long gameId;
+
     @CreatedDate
     @Column(nullable = false)
     private Instant fechaCreacion;

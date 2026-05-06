@@ -1,12 +1,11 @@
 package com.app.mswishlist.wishlistgame.controller;
 
+import com.app.mswishlist.wishlist.dto.WishListResponse;
 import com.app.mswishlist.wishlistgame.dto.WishlistGameRequest;
 import com.app.mswishlist.wishlistgame.dto.WishlistGameResponse;
 import com.app.mswishlist.wishlistgame.service.WishlistGameService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +17,12 @@ public class WishlistGameController {
     private final WishlistGameService wishlistGameService;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Page<WishlistGameResponse>> getAllByUserId(@PathVariable Long userId, Pageable pageable) {
-        return ResponseEntity.ok(wishlistGameService.getAllByUserId(userId,pageable));
+    public ResponseEntity<WishListResponse> getAllByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(wishlistGameService.getAllByUserId(userId));
     }
-    @PostMapping
-    public ResponseEntity<WishlistGameResponse> addGame(@RequestBody @Valid WishlistGameRequest wishlistGameRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(wishlistGameService.addGame(wishlistGameRequest));
+    @PostMapping("/{userId}")
+    public ResponseEntity<WishlistGameResponse> addGame(@PathVariable Long userId,@RequestBody @Valid WishlistGameRequest wishlistGameRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(wishlistGameService.addGame(userId,wishlistGameRequest));
     }
     @DeleteMapping("/{userId}/{gameId}")
     public ResponseEntity<Void> deleteGame(@PathVariable Long userId, @PathVariable Long gameId) {

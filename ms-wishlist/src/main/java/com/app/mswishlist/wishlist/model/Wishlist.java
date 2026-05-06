@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.time.Instant;
 
 @Entity
@@ -13,8 +12,8 @@ import java.time.Instant;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
 @EntityListeners(AuditingEntityListener.class)
+@Builder
 public class Wishlist {
     @Id
     @Column(nullable = false)

@@ -9,8 +9,6 @@ import java.time.LocalDate;
 @Builder
 public record WishlistGameResponse(
         Long id,
-        Long userId,
-        String nickname,
         Long gameId,
         String gameName,
         BigDecimal price,

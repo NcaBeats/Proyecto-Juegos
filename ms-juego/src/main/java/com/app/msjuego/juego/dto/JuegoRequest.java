@@ -1,6 +1,6 @@
-package com.app.msjuego.dto;
+package com.app.msjuego.juego.dto;
 
-import com.app.msjuego.model.EstadoJuego;
+import com.app.msjuego.juego.model.EstadoJuego;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 

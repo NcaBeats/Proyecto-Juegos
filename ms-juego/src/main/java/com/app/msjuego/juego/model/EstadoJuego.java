@@ -1,4 +1,4 @@
-package com.app.msjuego.model;
+package com.app.msjuego.juego.model;
 
 public enum EstadoJuego {
     PROXIMAMENTE,

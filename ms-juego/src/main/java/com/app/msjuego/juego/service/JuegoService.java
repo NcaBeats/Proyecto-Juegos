@@ -1,10 +1,10 @@
-package com.app.msjuego.service;
+package com.app.msjuego.juego.service;
 
-import com.app.msjuego.dto.JuegoRequest;
-import com.app.msjuego.dto.JuegoResponse;
-import com.app.msjuego.mapper.JuegoMapper;
-import com.app.msjuego.model.Juego;
-import com.app.msjuego.repository.JuegoRepository;
+import com.app.msjuego.juego.dto.JuegoRequest;
+import com.app.msjuego.juego.dto.JuegoResponse;
+import com.app.msjuego.juego.mapper.JuegoMapper;
+import com.app.msjuego.juego.model.Juego;
+import com.app.msjuego.juego.repository.JuegoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

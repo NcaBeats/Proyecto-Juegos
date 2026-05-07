@@ -1,8 +1,8 @@
-package com.app.msjuego.mapper;
+package com.app.msjuego.juego.mapper;
 
-import com.app.msjuego.dto.JuegoRequest;
-import com.app.msjuego.dto.JuegoResponse;
-import com.app.msjuego.model.Juego;
+import com.app.msjuego.juego.dto.JuegoRequest;
+import com.app.msjuego.juego.dto.JuegoResponse;
+import com.app.msjuego.juego.model.Juego;
 import org.springframework.stereotype.Component;
 
 @Component

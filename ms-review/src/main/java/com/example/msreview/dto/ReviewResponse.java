@@ -1,8 +1,5 @@
 package com.example.msreview.dto;
 
-import com.example.msreview.model.Rating;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 import java.time.Instant;
@@ -16,7 +13,7 @@ public record ReviewResponse(
         Long juegoId,
         String nombreJuego,
         String comentario,
-        Rating rating,
+        int rating,
         Instant fechaCreacion
 ) {
 }

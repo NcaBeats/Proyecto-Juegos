@@ -32,6 +32,15 @@ public class ReviewService {
             return reviewMapper.toResponse(review, juegoResponse, profileResponse);
         });
     }
+
+    public Page<ReviewResponse> findAllByUserId(Long id, Pageable pageable) {
+        return reviewRepository.findAllByUserId(id,pageable).map(review -> {
+            JuegoResponse juegoResponse = juegoClient.findById(review.getJuegoId());
+            ProfileResponse profileResponse = profileClient.findByUserId(review.getUserId());
+            return reviewMapper.toResponse(review, juegoResponse, profileResponse);
+        });
+    }
+
     @Transactional
     public ReviewResponse save (ReviewRequest reviewRequest) {
         JuegoResponse juegoResponse = juegoClient.findById(reviewRequest.juegoId());

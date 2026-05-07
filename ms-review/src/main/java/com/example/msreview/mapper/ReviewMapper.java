@@ -27,7 +27,7 @@ public class ReviewMapper {
                 .juegoId(review.getJuegoId())
                 .nombreJuego(juego.nombre())
                 .comentario(review.getComentario())
-                .rating(review.getRating())
+                .rating(review.getRating().getValue())
                 .fechaCreacion(review.getFechaCreacion())
                 .build();
     }

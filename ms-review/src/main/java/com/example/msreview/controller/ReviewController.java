@@ -17,11 +17,14 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewController {
     private final ReviewService reviewService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Page<ReviewResponse>> findAllByJuegoId(@PathVariable Long id, Pageable pageable) {
-        return ResponseEntity.ok(reviewService.findAllByJuegoId(id, pageable));
+    @GetMapping("/game/{gameId}")
+    public ResponseEntity<Page<ReviewResponse>> findAllByJuegoId(@PathVariable Long gameId, Pageable pageable) {
+        return ResponseEntity.ok(reviewService.findAllByJuegoId(gameId, pageable));
     }
-
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<Page<ReviewResponse>> findAllByUserId(@PathVariable Long userId, Pageable pageable) {
+        return ResponseEntity.ok(reviewService.findAllByUserId(userId, pageable));
+    }
     @PostMapping
     public ResponseEntity<ReviewResponse> save(@Valid @RequestBody ReviewRequest reviewRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.save(reviewRequest));

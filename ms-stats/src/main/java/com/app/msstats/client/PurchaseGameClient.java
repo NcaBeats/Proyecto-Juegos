@@ -10,4 +10,7 @@ import java.util.List;
 public interface PurchaseGameClient {
     @GetMapping("/purchases/game/{gameId}")//modificar
     List<PurchaseGameResponse> getAllPurchasesByGameId(Long gameId);
+
+    @GetMapping("purchases/user/{userId}")
+    List<PurchaseGameResponse> getAllPurchasesByUserId(Long userId);
 }

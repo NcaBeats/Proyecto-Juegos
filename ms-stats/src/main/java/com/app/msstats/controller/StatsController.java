@@ -24,5 +24,6 @@ public class StatsController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<UserStatsResponse>  getStatsByUser(@PathVariable Long userId) {
         return ResponseEntity.ok(statsService.getUserStats(userId));
-    }}
+    }
 }
+

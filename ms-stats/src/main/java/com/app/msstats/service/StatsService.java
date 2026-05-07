@@ -9,17 +9,20 @@ import com.app.msstats.dto.UserStatsResponse;
 import com.app.msstats.dto.external.PurchaseGameResponse;
 import com.app.msstats.dto.external.ReviewResponse;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 
 @Service
 @RequiredArgsConstructor
 public class StatsService {
+
     private final ReviewClient reviewClient;
     private final PurchaseGameClient purchaseGameClient;
     private final ProfileClient profileClient;
     private final JuegoClient juegoClient;
     public GameStatsResponse getGameStats(Long gameId) {
+
 
         var purchases = purchaseGameClient.getAllPurchasesByGameId(gameId);
         var reviews = reviewClient.getReviewsByGameId(gameId);

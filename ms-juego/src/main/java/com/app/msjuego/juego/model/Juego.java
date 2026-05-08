@@ -6,7 +6,6 @@ import com.app.msjuego.juego.dto.JuegoRequest;
 import com.app.msjuego.plataforma.model.Plataforma;
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.logging.log4j.util.Lazy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.math.BigDecimal;
@@ -41,6 +40,7 @@ public class Juego {
     private EstadoJuego estado;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "estudio_id", nullable = false)
     private Estudio estudio;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -56,14 +56,17 @@ public class Juego {
     private List<Plataforma> plataformas = new ArrayList<>();
 
     @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private Instant fecha_registro;
+    @Column(name = "fecha_registro",nullable = false, updatable = false)
+    private Instant fechaRegistro;
 
-    public void update(JuegoRequest request) {
+    public void update(JuegoRequest request,Estudio estudio, List<Genero> generos, List<Plataforma> plataformas) {
         this.nombre = request.nombre();
         this.descripcion = request.descripcion();
         this.precio = request.precio();
         this.fechaLanzamiento = request.fechaLanzamiento();
         this.estado = request.estado();
+        this.estudio = estudio;
+        this.generos = generos;
+        this.plataformas = plataformas;
     }
 }

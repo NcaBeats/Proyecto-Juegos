@@ -1,8 +1,8 @@
-package com.app.msjuego.controller;
+package com.app.msjuego.juego.controller;
 
-import com.app.msjuego.dto.JuegoRequest;
-import com.app.msjuego.dto.JuegoResponse;
-import com.app.msjuego.service.JuegoService;
+import com.app.msjuego.juego.dto.JuegoRequest;
+import com.app.msjuego.juego.dto.JuegoResponse;
+import com.app.msjuego.juego.service.JuegoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

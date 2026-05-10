@@ -22,6 +22,7 @@
   <modules>
     <module>ms-juego</module>
     <module>ms-usuario</module>
+    <module>ms-purchase</module>
     <module>ms-profile</module>
     <module>ms-review</module>
     <module>ms-wishlist</module>
@@ -36,16 +37,6 @@
       <artifactId>spring-cloud-starter-openfeign</artifactId>
       <version>5.0.1</version>
       <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mapstruct</groupId>
-      <artifactId>mapstruct</artifactId>
-      <version>1.6.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mapstruct</groupId>
-      <artifactId>mapstruct-processor</artifactId>
-      <version>1.6.3</version>
     </dependency>
   </dependencies>
 </dependencyManagement>

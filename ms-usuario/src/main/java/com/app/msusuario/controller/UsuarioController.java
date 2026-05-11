@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/usuarios")
@@ -45,6 +47,11 @@ public class UsuarioController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         usuarioService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+    @PutMapping("/{id}/balance")
+    public ResponseEntity<Void> updateBalance(@PathVariable Long id,@RequestParam BigDecimal monto) {
+        usuarioService.restarSaldo(id, monto);
         return ResponseEntity.noContent().build();
     }
 }

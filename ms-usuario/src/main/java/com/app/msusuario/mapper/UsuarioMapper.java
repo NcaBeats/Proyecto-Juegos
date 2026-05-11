@@ -11,6 +11,7 @@ public class UsuarioMapper {
         return Usuario.builder()
                 .nombre(request.nombre())
                 .email(request.email())
+                .saldo(request.saldo())
                 .build();
     }
 
@@ -19,6 +20,7 @@ public class UsuarioMapper {
                 .id(usuario.getId())
                 .nombre(usuario.getNombre())
                 .email(usuario.getEmail())
+                .saldo(usuario.getSaldo())
                 .fecha_registro(usuario.getFecha_creacion())
                 .build();
     }

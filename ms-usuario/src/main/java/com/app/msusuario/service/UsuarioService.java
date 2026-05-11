@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -50,5 +52,18 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el id " + id));
         usuarioRepository.delete(usuario);
+    }
+    @Transactional
+    public void restarSaldo(Long userId, BigDecimal monto) {
+
+        Usuario user = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (user.getSaldo().compareTo(monto) < 0) {
+            throw new RuntimeException("saldo insuficiente");
+        }
+        user.setSaldo(user.getSaldo().subtract(monto));
+
+        usuarioRepository.save(user);
     }
 }

@@ -17,6 +17,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <mapstruct.version>1.5.5.Final</mapstruct.version>
   </properties>
 
   <modules>
@@ -37,6 +38,16 @@
       <artifactId>spring-cloud-starter-openfeign</artifactId>
       <version>5.0.1</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+      <version>${mapstruct.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct-processor</artifactId>
+      <version>${mapstruct.version}</version>
     </dependency>
   </dependencies>
 </dependencyManagement>

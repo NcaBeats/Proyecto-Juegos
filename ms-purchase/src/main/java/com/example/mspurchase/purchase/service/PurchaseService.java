@@ -1,22 +1,70 @@
 package com.example.mspurchase.purchase.service;
 
+import com.example.mspurchase.purchase.client.UserClient;
+import com.example.mspurchase.purchase.dto.PurchaseRequest;
+import com.example.mspurchase.purchase.dto.PurchaseResponse;
+import com.example.mspurchase.purchase.dto.external.UserResponse;
+import com.example.mspurchase.purchase.mapper.PurchaseMapper;
 import com.example.mspurchase.purchase.model.Purchase;
 import com.example.mspurchase.purchase.repository.PurchaseRepository;
+import com.example.mspurchase.purchasegame.client.JuegoClient;
+import com.example.mspurchase.purchasegame.dto.external.JuegoResponse;
+import com.example.mspurchase.purchasegame.model.PurchaseGame;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PurchaseService {
     private final PurchaseRepository purchaseRepository;
+    private final PurchaseMapper purchaseMapper;
+    private final JuegoClient juegoClient;
+    private final UserClient userClient;
+
+    public Page<PurchaseResponse> findAllByUserId(Long userId, Pageable pageable) {
+        return purchaseRepository.findAllByUserId(userId, pageable)
+                .map(purchaseMapper::toDTO);
+    }
+
+    public Page<PurchaseResponse> findAll(Pageable pageable) {
+        return purchaseRepository.findAll(pageable)
+                .map(purchaseMapper::toDTO);
+    }
 
     @Transactional
-    public Purchase createHeader(Long userId) {
-        return purchaseRepository.save(Purchase.builder()
-                .userId(userId)
-                .totalPrecio(BigDecimal.ZERO)
-                .build());
+    public PurchaseResponse createPurchase(PurchaseRequest dto) {
+        UserResponse user = userClient.getUserById(dto.userId());
+        List<JuegoResponse> juegos = dto.juegos()
+                .stream()
+                .map(juego -> juegoClient.getJuegoById(juego.gameId()))
+                .toList();
+
+
+
+        Purchase purchase = purchaseMapper.toEntity(dto);
+
+        List<PurchaseGame> juegosPG = juegos.stream()
+                .map(juego -> PurchaseGame.builder()
+                        .gameId(juego.id())
+                        .purchase(purchase)
+                        .build()).toList();
+
+        purchase.setJuegos(juegosPG);
+
+        BigDecimal total = juegos.stream().map(JuegoResponse::precio).reduce(BigDecimal.ZERO, BigDecimal::add);
+        purchase.setTotalPrecio(total);
+
+        if (user.saldo().compareTo(purchase.getTotalPrecio()) < 0) {
+            throw new RuntimeException("saldo insuficiente");
+        }
+        userClient.updateBalance(user.id(), total);
+        Purchase saved = purchaseRepository.save(purchase);
+        return purchaseMapper.toDTO(saved);
     }
 }

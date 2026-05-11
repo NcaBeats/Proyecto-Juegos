@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 
 @Service
 @RequiredArgsConstructor
@@ -31,32 +33,36 @@ public class StatsService {
                 .mapToLong(PurchaseGameResponse::cantidad)
                 .sum();
 
-        double ratingPromedio = reviews.stream()
-                .mapToInt(ReviewResponse::rating)
-                .average()
-                .orElse(0.0);
+        BigDecimal ratingPromedio = reviews.isEmpty() ?
+                BigDecimal.ZERO :
+                BigDecimal.valueOf(reviews.stream()
+                        .mapToInt(ReviewResponse::rating)
+                        .average()
+                        .orElse(0.0));
 
         return GameStatsResponse.builder()
                 .gameId(gameId)
-                .gameName(game.name())
+                .gameName(game.nombre())
                 .ventasTotales(ventasTotales)
                 .ratingPromedio(ratingPromedio)
                 .build();
     }
 
     public UserStatsResponse getUserStats(Long userId) {
-        var purchases = purchaseGameClient.getAllPurchasesByUserId(userId);
+        var purchases = purchaseGameClient.findAllByUserId(userId);
         var reviews = reviewClient.getReviewsByUserId(userId);
         var profile = profileClient.getProfileByUserId(userId);
 
-        long juegosComprados = purchases.size(); // aquí se optó por contar los juegos totales incluso si se compra el mismo juego varias veces.
-        double dineroGastado = purchases.stream()
-                .mapToDouble(PurchaseGameResponse::price)
-                .sum();
-        double promedioRatingDado = reviews.stream()
-                .mapToInt(ReviewResponse::rating)
-                .average()
-                .orElse(0.0);
+        long juegosComprados = purchases.size();
+        BigDecimal dineroGastado = purchases.stream()
+                .map(PurchaseGameResponse::price)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal promedioRatingDado = reviews.isEmpty() ?
+                BigDecimal.ZERO :
+                BigDecimal.valueOf(reviews.stream()
+                        .mapToInt(ReviewResponse::rating)
+                        .average()
+                        .orElse(0.0));
         return UserStatsResponse.builder()
                 .userId(userId)
                 .nickname(profile.nickname())

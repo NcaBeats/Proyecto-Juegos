@@ -5,6 +5,6 @@ import lombok.Builder;
 @Builder
 public record JuegoResponse(
         Long id,
-        String name
+        String nombre
 ) {
 }

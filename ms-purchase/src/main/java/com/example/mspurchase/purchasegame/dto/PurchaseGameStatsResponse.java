@@ -1,15 +1,14 @@
-package com.app.msstats.dto.external;
+package com.example.mspurchase.purchasegame.dto;
 
 import lombok.Builder;
 
 import java.math.BigDecimal;
 
 @Builder
-public record PurchaseGameResponse(
+public record PurchaseGameStatsResponse(
         Long userId,
         Long gameId,
         String gameName,
         int cantidad,
         BigDecimal price
-) {
-}
+) {}

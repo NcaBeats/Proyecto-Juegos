@@ -1,4 +1,4 @@
-package com.app.msnotification.model;
+package com.example.msreview.model;
 
 public enum TipoNotification {
     COMPRA,

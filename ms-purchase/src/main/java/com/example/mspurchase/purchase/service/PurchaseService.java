@@ -8,8 +8,10 @@ import com.example.mspurchase.purchase.mapper.PurchaseMapper;
 import com.example.mspurchase.purchase.model.Purchase;
 import com.example.mspurchase.purchase.repository.PurchaseRepository;
 import com.example.mspurchase.purchasegame.client.JuegoClient;
+import com.example.mspurchase.purchasegame.dto.PurchaseGameStatsResponse;
 import com.example.mspurchase.purchasegame.dto.external.JuegoResponse;
 import com.example.mspurchase.purchasegame.model.PurchaseGame;
+import com.example.mspurchase.purchasegame.repository.PurchaseGameRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +25,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class PurchaseService {
     private final PurchaseRepository purchaseRepository;
+    private final PurchaseGameRepository purchaseGameRepository;
     private final PurchaseMapper purchaseMapper;
     private final JuegoClient juegoClient;
     private final UserClient userClient;
@@ -66,5 +69,37 @@ public class PurchaseService {
         userClient.updateBalance(user.id(), total);
         Purchase saved = purchaseRepository.save(purchase);
         return purchaseMapper.toDTO(saved);
+    }
+
+    public List<PurchaseGameStatsResponse> findAllByGameIdForStats(Long gameId) {
+        List<PurchaseGame> purchaseGames = purchaseGameRepository.findByGameId(gameId);
+        return purchaseGames.stream()
+                .map(pg -> {
+                    JuegoResponse juego = juegoClient.getJuegoById(pg.getGameId());
+                    return PurchaseGameStatsResponse.builder()
+                            .userId(pg.getPurchase().getUserId())
+                            .gameId(pg.getGameId())
+                            .gameName(juego.name())
+                            .cantidad(1)
+                            .price(juego.precio())
+                            .build();
+                })
+                .toList();
+    }
+
+    public List<PurchaseGameStatsResponse> findAllByUserIdForStats(Long userId) {
+        List<PurchaseGame> purchaseGames = purchaseGameRepository.findByPurchaseUserId(userId);
+        return purchaseGames.stream()
+                .map(pg -> {
+                    JuegoResponse juego = juegoClient.getJuegoById(pg.getGameId());
+                    return PurchaseGameStatsResponse.builder()
+                            .userId(pg.getPurchase().getUserId())
+                            .gameId(pg.getGameId())
+                            .gameName(juego.name())
+                            .cantidad(1)
+                            .price(juego.precio())
+                            .build();
+                })
+                .toList();
     }
 }

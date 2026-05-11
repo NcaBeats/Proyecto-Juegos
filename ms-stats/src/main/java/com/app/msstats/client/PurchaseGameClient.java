@@ -3,14 +3,16 @@ package com.app.msstats.client;
 import com.app.msstats.dto.external.PurchaseGameResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@FeignClient(name = "purchase-game-client-stats", url = "${client.purchase.url}")//modificar
+@FeignClient(name = "purchase-game-client-stats", url = "http://localhost:8083/api/v1/purchases")
 public interface PurchaseGameClient {
-    @GetMapping("/purchases/game/{gameId}")//modificar
-    List<PurchaseGameResponse> getAllPurchasesByGameId(Long gameId);
 
-    @GetMapping("purchases/user/{userId}")
-    List<PurchaseGameResponse> getAllPurchasesByUserId(Long userId);
+    @GetMapping("/game/{gameId}/stats")
+    List<PurchaseGameResponse> getAllPurchasesByGameId(@PathVariable Long gameId);
+
+    @GetMapping("/user/{userId}/stats")
+    List<PurchaseGameResponse> findAllByUserId(@PathVariable Long userId);
 }

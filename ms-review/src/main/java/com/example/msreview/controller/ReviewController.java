@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/reviews")
@@ -18,12 +20,12 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/game/{gameId}")
-    public ResponseEntity<Page<ReviewResponse>> findAllByJuegoId(@PathVariable Long gameId, Pageable pageable) {
-        return ResponseEntity.ok(reviewService.findAllByJuegoId(gameId, pageable));
+    public ResponseEntity<List<ReviewResponse>> findAllByJuegoId(@PathVariable Long gameId) {
+        return ResponseEntity.ok(reviewService.findAllByJuegoId(gameId));
     }
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Page<ReviewResponse>> findAllByUserId(@PathVariable Long userId, Pageable pageable) {
-        return ResponseEntity.ok(reviewService.findAllByUserId(userId, pageable));
+    public ResponseEntity<List<ReviewResponse>> findAllByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(reviewService.findAllByUserId(userId));
     }
     @PostMapping
     public ResponseEntity<ReviewResponse> save(@Valid @RequestBody ReviewRequest reviewRequest) {

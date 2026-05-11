@@ -4,5 +4,6 @@ import java.math.BigDecimal;
 
 public record JuegoResponse(
         Long id,
+        String name,
         BigDecimal precio
 ){}

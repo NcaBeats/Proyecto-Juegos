@@ -1,13 +1,11 @@
 package com.app.mswishlist.wishlist.service;
 
-
 import com.app.mswishlist.wishlist.client.ProfileClient;
 import com.app.mswishlist.wishlist.model.Wishlist;
 import com.app.mswishlist.wishlist.repository.WishlistRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
 
 @Service

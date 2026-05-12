@@ -29,6 +29,7 @@
     <module>ms-wishlist</module>
     <module>ms-notification</module>
     <module>ms-stats</module>
+    <module>ms-library</module>
   </modules>
 
 <dependencyManagement>

@@ -1,9 +1,13 @@
 package com.example.mspurchase.purchase.service;
 
+import com.example.mspurchase.purchase.client.NotificationClient;
 import com.example.mspurchase.purchase.client.UserClient;
 import com.example.mspurchase.purchase.dto.PurchaseRequest;
 import com.example.mspurchase.purchase.dto.PurchaseResponse;
+import com.example.mspurchase.purchase.dto.external.PurchaseNotificationRequest;
 import com.example.mspurchase.purchase.dto.external.UserResponse;
+import com.example.mspurchase.purchase.dto.external.GamePurchaseResponse;
+import com.example.mspurchase.purchase.dto.external.enums.TipoNotification;
 import com.example.mspurchase.purchase.mapper.PurchaseMapper;
 import com.example.mspurchase.purchase.model.Purchase;
 import com.example.mspurchase.purchase.repository.PurchaseRepository;
@@ -29,6 +33,7 @@ public class PurchaseService {
     private final PurchaseMapper purchaseMapper;
     private final JuegoClient juegoClient;
     private final UserClient userClient;
+    private final NotificationClient notificationClient;
 
     public Page<PurchaseResponse> findAllByUserId(Long userId, Pageable pageable) {
         return purchaseRepository.findAllByUserId(userId, pageable)
@@ -43,16 +48,20 @@ public class PurchaseService {
     @Transactional
     public PurchaseResponse createPurchase(PurchaseRequest dto) {
         UserResponse user = userClient.getUserById(dto.userId());
-        List<JuegoResponse> juegos = dto.juegos()
+        List<JuegoResponse> juegosRaw = dto.juegos()
                 .stream()
                 .map(juego -> juegoClient.getJuegoById(juego.gameId()))
+                .toList();
+
+        List<GamePurchaseResponse> juegos = juegosRaw.stream()
+                .map(j -> GamePurchaseResponse.builder().id(j.id()).name(j.nombre()).precio(j.precio()).build())
                 .toList();
 
 
 
         Purchase purchase = purchaseMapper.toEntity(dto);
 
-        List<PurchaseGame> juegosPG = juegos.stream()
+        List<PurchaseGame> juegosPG = juegosRaw.stream()
                 .map(juego -> PurchaseGame.builder()
                         .gameId(juego.id())
                         .purchase(purchase)
@@ -60,7 +69,7 @@ public class PurchaseService {
 
         purchase.setJuegos(juegosPG);
 
-        BigDecimal total = juegos.stream().map(JuegoResponse::precio).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal total = juegosRaw.stream().map(JuegoResponse::precio).reduce(BigDecimal.ZERO, BigDecimal::add);
         purchase.setTotalPrecio(total);
 
         if (user.saldo().compareTo(purchase.getTotalPrecio()) < 0) {
@@ -68,6 +77,15 @@ public class PurchaseService {
         }
         userClient.updateBalance(user.id(), total);
         Purchase saved = purchaseRepository.save(purchase);
+
+        PurchaseNotificationRequest request = PurchaseNotificationRequest.builder()
+                .userId(dto.userId())
+                .message("Compra: " + juegos.stream().map(GamePurchaseResponse::name).collect(java.util.stream.Collectors.joining(", ")))
+                .tipo(TipoNotification.COMPRA)
+                .juegos(juegos)
+                .build();
+        notificationClient.createNotification(request);
+
         return purchaseMapper.toDTO(saved);
     }
 
@@ -79,7 +97,7 @@ public class PurchaseService {
                     return PurchaseGameStatsResponse.builder()
                             .userId(pg.getPurchase().getUserId())
                             .gameId(pg.getGameId())
-                            .gameName(juego.name())
+                            .gameName(juego.nombre())
                             .cantidad(1)
                             .price(juego.precio())
                             .build();
@@ -95,7 +113,7 @@ public class PurchaseService {
                     return PurchaseGameStatsResponse.builder()
                             .userId(pg.getPurchase().getUserId())
                             .gameId(pg.getGameId())
-                            .gameName(juego.name())
+                            .gameName(juego.nombre())
                             .cantidad(1)
                             .price(juego.precio())
                             .build();

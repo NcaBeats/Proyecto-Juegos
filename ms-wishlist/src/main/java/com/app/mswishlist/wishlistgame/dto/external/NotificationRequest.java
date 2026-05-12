@@ -1,6 +1,6 @@
-package com.example.msreview.dto.external;
+package com.app.mswishlist.wishlistgame.dto.external;
 
-import com.example.msreview.dto.external.enums.TipoNotification;
+import com.app.mswishlist.wishlistgame.dto.external.enums.TipoNotification;
 import lombok.Builder;
 
 @Builder

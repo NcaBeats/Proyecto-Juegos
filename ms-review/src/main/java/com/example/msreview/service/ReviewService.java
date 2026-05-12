@@ -10,12 +10,10 @@ import com.example.msreview.dto.external.NotificationRequest;
 import com.example.msreview.dto.external.ProfileResponse;
 import com.example.msreview.mapper.ReviewMapper;
 import com.example.msreview.model.Review;
-import com.example.msreview.model.TipoNotification;
+import com.example.msreview.dto.external.enums.TipoNotification;
 import com.example.msreview.repository.ReviewRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

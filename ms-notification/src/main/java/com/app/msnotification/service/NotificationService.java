@@ -2,8 +2,11 @@ package com.app.msnotification.service;
 
 import com.app.msnotification.dto.NotificationRequest;
 import com.app.msnotification.dto.NotificationResponse;
+import com.app.msnotification.dto.external.GamePurchaseResponse;
 import com.app.msnotification.mapper.NotificationMapper;
 import com.app.msnotification.model.Notification;
+import com.app.msnotification.dto.PurchaseNotificationRequest;
+import com.app.msnotification.model.TipoNotification;
 import com.app.msnotification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,5 +30,17 @@ public class NotificationService {
         Notification notification = notificationMapper.toEntity(notificationRequest);
         Notification saved = notificationRepository.save(notification);
         return notificationMapper.toResponse(saved);
+    }
+    @Transactional
+    public void savePurchaseNotification(PurchaseNotificationRequest request) {
+        for (GamePurchaseResponse juego : request.juegos()) {
+            Notification notification = Notification.builder()
+                    .userId(request.userId())
+                    .message("Compra: " + juego.name())
+                    .tipo(TipoNotification.COMPRA)
+                    .gameId(juego.id())
+                    .build();
+            notificationRepository.save(notification);
+        }
     }
 }

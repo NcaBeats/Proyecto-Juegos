@@ -29,7 +29,7 @@ public class Purchase {
 
     @OneToMany(mappedBy = "purchase",fetch = FetchType.LAZY,cascade = CascadeType.ALL,
             orphanRemoval = true)
-    private List<PurchaseGame> juegos=new ArrayList<>();
+    private List<PurchaseGame> juegos = new ArrayList<>();
 
     @Column(nullable = false)
     private BigDecimal totalPrecio;

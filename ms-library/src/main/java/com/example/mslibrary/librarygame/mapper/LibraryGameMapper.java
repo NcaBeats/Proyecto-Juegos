@@ -9,17 +9,17 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LibraryGameMapper {
-    public LibraryGame toEntity (LibraryGameRequest request, Library library){
-        return LibraryGame.builder()
-                .gameId(request.gameId())
-                .library(library)
-                .build();
-    }
+//    public LibraryGame toEntity (LibraryGameRequest request, Library library){
+//        return LibraryGame.builder()
+//                .gameId(request.gameId())
+//                .library(library)
+//                .build();
+//    }
     public LibraryGameResponse toResponse (LibraryGame entity, JuegoResponse juegoResponse){
         return LibraryGameResponse.builder()
                 .id(entity.getId())
                 .gameId(entity.getGameId())
-                .gameName(juegoResponse.name())
+                .gameName(juegoResponse.nombre())
                 .fechaCreacion(entity.getFechaCreacion())
                 .build();
     }

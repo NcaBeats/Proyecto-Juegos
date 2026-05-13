@@ -12,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ public class FriendshipService {
         var amistadesEnviadas = friendshipRepository.findByUserIdAndStatus(userId, FriendshipStatus.ACCEPTED);
         var amistadesRecibidas = friendshipRepository.findByFriendIdAndStatus(userId, FriendshipStatus.ACCEPTED);
 
-        return java.util.stream.Stream.concat(amistadesEnviadas.stream(), amistadesRecibidas.stream())
+        return Stream.concat(amistadesEnviadas.stream(), amistadesRecibidas.stream())
                 .map(friendshipMapper::toResponse)
                 .toList();
     }
@@ -56,7 +58,7 @@ public class FriendshipService {
                 .userId(userId)
                 .friendId(request.friendId())
                 .status(FriendshipStatus.PENDING)
-                .createdAt(java.time.Instant.now())
+                .createdAt(Instant.now())
                 .build();
 
         return friendshipMapper.toResponse(friendshipRepository.save(friendship));

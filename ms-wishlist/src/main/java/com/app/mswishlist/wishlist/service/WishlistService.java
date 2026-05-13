@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class WishlistService {
     private final WishlistRepository wishlistRepository;
     private final ProfileClient profileClient;
@@ -27,7 +28,6 @@ public class WishlistService {
 
     }
 
-    @Transactional(readOnly = true)
     public Optional<Wishlist> findById(Long userId) {
         return wishlistRepository.findById(userId);
     }

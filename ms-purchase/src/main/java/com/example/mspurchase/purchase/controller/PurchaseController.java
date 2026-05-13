@@ -22,6 +22,11 @@ public class PurchaseController {
 
     private final PurchaseService purchaseService;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Page<PurchaseResponse>> findAllByUserId(@PathVariable Long id, Pageable pageable) {
+        return ResponseEntity.ok(purchaseService.findAllByUserId(id, pageable));
+    }
+
     @GetMapping
     public ResponseEntity<Page<PurchaseResponse>> findAll(Pageable pageable) {
         return ResponseEntity.ok(purchaseService.findAll(pageable));

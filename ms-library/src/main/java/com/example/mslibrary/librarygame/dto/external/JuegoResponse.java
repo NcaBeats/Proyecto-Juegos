@@ -4,7 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record JuegoResponse(
-        Long gameId,
-        String name
+        Long id,
+        String nombre
 ) {
 }

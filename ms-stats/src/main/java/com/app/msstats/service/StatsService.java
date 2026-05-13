@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
 
 
 @Service
@@ -23,53 +25,38 @@ public class StatsService {
     private final PurchaseGameClient purchaseGameClient;
     private final ProfileClient profileClient;
     private final JuegoClient juegoClient;
+
     public GameStatsResponse getGameStats(Long gameId) {
-
-
         var purchases = purchaseGameClient.getAllPurchasesByGameId(gameId);
         var reviews = reviewClient.getReviewsByGameId(gameId);
         var game = juegoClient.getJuego(gameId);
-        long ventasTotales = purchases.stream()
-                .mapToLong(PurchaseGameResponse::cantidad)
-                .sum();
-
-        BigDecimal ratingPromedio = reviews.isEmpty() ?
-                BigDecimal.ZERO :
-                BigDecimal.valueOf(reviews.stream()
-                        .mapToInt(ReviewResponse::rating)
-                        .average()
-                        .orElse(0.0));
-
         return GameStatsResponse.builder()
                 .gameId(gameId)
                 .gameName(game.nombre())
-                .ventasTotales(ventasTotales)
-                .ratingPromedio(ratingPromedio)
+                .ventasTotales(purchases.stream().mapToLong(PurchaseGameResponse::cantidad).sum())
+                .ratingPromedio(calculateAverageRating(reviews))
                 .build();
     }
-
     public UserStatsResponse getUserStats(Long userId) {
         var purchases = purchaseGameClient.findAllByUserId(userId);
         var reviews = reviewClient.getReviewsByUserId(userId);
         var profile = profileClient.getProfileByUserId(userId);
-
-        long juegosComprados = purchases.size();
-        BigDecimal dineroGastado = purchases.stream()
-                .map(PurchaseGameResponse::price)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal promedioRatingDado = reviews.isEmpty() ?
-                BigDecimal.ZERO :
-                BigDecimal.valueOf(reviews.stream()
-                        .mapToInt(ReviewResponse::rating)
-                        .average()
-                        .orElse(0.0));
         return UserStatsResponse.builder()
                 .userId(userId)
                 .nickname(profile.nickname())
                 .avatar(profile.avatar())
-                .juegosComprados(juegosComprados)
-                .dineroGastado(dineroGastado)
-                .promedioRatingDado(promedioRatingDado)
+                .juegosComprados(purchases.size())
+                .dineroGastado(purchases.stream().map(PurchaseGameResponse::price).reduce(BigDecimal.ZERO, BigDecimal::add))
+                .promedioRatingDado(calculateAverageRating(reviews))
                 .build();
+    }
+
+    private BigDecimal calculateAverageRating(List<ReviewResponse> reviews) {
+        if (reviews.isEmpty()) return BigDecimal.ZERO;
+        return BigDecimal.valueOf(reviews.stream()
+                .mapToInt(ReviewResponse::rating)
+                .average()
+                .orElse(0.0))
+                .setScale(1, RoundingMode.DOWN);
     }
 }

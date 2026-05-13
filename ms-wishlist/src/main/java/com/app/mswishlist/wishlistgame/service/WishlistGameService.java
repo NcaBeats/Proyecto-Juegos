@@ -20,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -35,7 +37,7 @@ public class WishlistGameService {
     public WishListResponse getAllByUserId(Long userId) {
 
         ProfileResponse profile = profileClient.getProfileByUserId(userId);
-
+        wishlistService.getOrCreate(userId);
         var games = wishlistService.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Wishlist no encontrada"))
                 .getGames()
@@ -44,7 +46,7 @@ public class WishlistGameService {
                         wg,
                         juegoClient.getJuegoById(wg.getGameId())
                 ))
-                .toList();
+                .collect(Collectors.toSet());
 
         return WishListResponse.builder()
                 .userId(userId)

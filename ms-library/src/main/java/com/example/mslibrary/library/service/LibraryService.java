@@ -7,6 +7,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class LibraryService {
@@ -19,7 +21,13 @@ public class LibraryService {
 
         return libraryRepository.findById(userId)
                 .orElseGet(() -> libraryRepository.save(
-                        Library.
-                ))
+                        Library.builder()
+                                .userId(userId)
+                                .build()
+                ));
+
+    }
+    public Optional<Library> findByUserId(Long  userId) {
+        return libraryRepository.findById(userId);
     }
 }

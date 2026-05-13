@@ -1,7 +1,13 @@
 package com.app.msusuario.model;
 
+import com.app.msusuario.dto.UsuarioRequest;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.math.BigDecimal;
+import java.time.Instant;
 
 @Entity
 @Table(name = "usuario")
@@ -10,6 +16,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,4 +25,20 @@ public class Usuario {
 
     @Column(nullable = false)
     private String nombre;
+
+    @Column(nullable = false,unique = true,length = 100)
+    private String email;
+
+    @Column(nullable = false)
+    private BigDecimal saldo;
+
+    @CreatedDate
+    @Column(nullable = false)
+    private Instant fecha_creacion;
+
+    public void update(UsuarioRequest request){
+        this.nombre = request.nombre();
+        this.email = request.email();
+        this.saldo = request.saldo();
+    }
 }

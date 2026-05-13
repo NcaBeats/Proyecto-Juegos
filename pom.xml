@@ -17,11 +17,20 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <mapstruct.version>1.5.5.Final</mapstruct.version>
   </properties>
 
   <modules>
     <module>ms-juego</module>
     <module>ms-usuario</module>
+    <module>ms-purchase</module>
+    <module>ms-profile</module>
+    <module>ms-review</module>
+    <module>ms-wishlist</module>
+    <module>ms-notification</module>
+    <module>ms-stats</module>
+    <module>ms-friendship</module>
+    <module>ms-library</module>
   </modules>
 
 <dependencyManagement>
@@ -31,6 +40,16 @@
       <artifactId>spring-cloud-starter-openfeign</artifactId>
       <version>5.0.1</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+      <version>${mapstruct.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct-processor</artifactId>
+      <version>${mapstruct.version}</version>
     </dependency>
   </dependencies>
 </dependencyManagement>

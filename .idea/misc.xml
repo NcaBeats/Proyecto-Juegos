@@ -7,6 +7,12 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/ms-juego/pom.xml" />
         <option value="$PROJECT_DIR$/ms-usuario/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-profile/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-review/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-wishlist/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-notification/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-stats/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-library/pom.xml" />
       </list>
     </option>
   </component>

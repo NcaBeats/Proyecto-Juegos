@@ -3,11 +3,11 @@ spring:
     name: ms-usuario
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/db_usuarios
-    driver-class-name: org.postgresql.Driver
+    url:  jdbc:h2:mem:db_usuarios
+    driver-class-name: org.h2.Driver
     username: postgres
     password: 1234
-
+#  jdbc:postgresql://localhost:5432/db_usuarios
   h2:
     console:
       enabled: true

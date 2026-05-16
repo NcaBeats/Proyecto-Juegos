@@ -18,14 +18,29 @@ import org.springframework.web.bind.annotation.*;
 public class JuegoController {
     private final JuegoService juegoService;
 
+    @GetMapping
+    public ResponseEntity<Page<JuegoResponse>> findAll(Pageable pageable) {
+        return ResponseEntity.ok(juegoService.findAll(pageable));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<JuegoResponse> findById (@Valid @PathVariable Long id){
         return ResponseEntity.ok(juegoService.findById(id));
     }
 
-    @GetMapping
-    public ResponseEntity<Page<JuegoResponse>> findAll(Pageable pageable) {
-        return ResponseEntity.ok(juegoService.findAll(pageable));
+    @GetMapping("/estudio/{estudioId}")
+    public ResponseEntity<Page<JuegoResponse>> getAllByEstudioId(@PathVariable Long estudioId, Pageable pageable) {
+        return ResponseEntity.ok(juegoService.getAllByEstudioId(estudioId, pageable));
+    }
+
+    @GetMapping("/genero/{generoId}")
+    public ResponseEntity<Page<JuegoResponse>> getAllByGenerosId(@PathVariable Long generoId, Pageable pageable) {
+        return ResponseEntity.ok(juegoService.getAllByGenerosId(generoId, pageable));
+    }
+
+    @GetMapping("/plataforma/{plataformaId}")
+    public ResponseEntity<Page<JuegoResponse>> getAllByPlataformasId(@PathVariable Long plataformaId, Pageable pageable) {
+        return ResponseEntity.ok(juegoService.getAllByPlataformasId(plataformaId, pageable));
     }
 
     @GetMapping("/buscar")

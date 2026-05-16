@@ -45,6 +45,18 @@ public class JuegoService {
                 .orElseThrow(() -> new EntityNotFoundException("Juego no encontrado con el nombre: " + nombre));
     }
 
+    public Page<JuegoResponse> getAllByEstudioId(Long estudioId, Pageable pageable) {
+        return juegoRepository.getAllByEstudioId(estudioId, pageable).map(juegoMapper::toResponse);
+    }
+
+    public Page<JuegoResponse> getAllByGenerosId(Long generoId, Pageable pageable) {
+        return juegoRepository.getAllByGenerosId(generoId, pageable).map(juegoMapper::toResponse);
+    }
+
+    public Page<JuegoResponse> getAllByPlataformasId(Long plataformaId, Pageable pageable) {
+        return juegoRepository.getAllByPlataformasId(plataformaId, pageable).map(juegoMapper::toResponse);
+    }
+
     @Transactional
     public JuegoResponse save(JuegoRequest request) {
         Estudio estudio = estudioRepository.findById(request.estudioId())

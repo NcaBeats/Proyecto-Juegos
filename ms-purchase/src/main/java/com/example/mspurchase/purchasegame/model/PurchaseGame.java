@@ -29,5 +29,6 @@ public class PurchaseGame {
 
     @CreatedDate
     @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
     private Instant fechaRegistro;
 }

@@ -10,6 +10,6 @@ public record UsuarioResponse (
         String nombre,
         String email,
         BigDecimal saldo,
-        Instant fecha_registro
+        Instant fecha_creacion
 ){
 }

@@ -8,7 +8,8 @@ import java.math.BigDecimal;
 public record GameStatsResponse(
         Long gameId,
         String gameName,
-        long ventasTotales,
-        BigDecimal ratingPromedio
+        int copiasVendidas,
+        BigDecimal ventasTotales,
+        double ratingPromedio
 ) {
 }

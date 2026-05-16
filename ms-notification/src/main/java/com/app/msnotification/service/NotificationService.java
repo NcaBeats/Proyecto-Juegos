@@ -2,7 +2,6 @@ package com.app.msnotification.service;
 
 import com.app.msnotification.dto.NotificationRequest;
 import com.app.msnotification.dto.NotificationResponse;
-import com.app.msnotification.dto.external.GamePurchaseResponse;
 import com.app.msnotification.mapper.NotificationMapper;
 import com.app.msnotification.model.Notification;
 import com.app.msnotification.dto.PurchaseNotificationRequest;
@@ -33,14 +32,15 @@ public class NotificationService {
     }
     @Transactional
     public void savePurchaseNotification(PurchaseNotificationRequest request) {
-        for (GamePurchaseResponse juego : request.juegos()) {
-            Notification notification = Notification.builder()
-                    .userId(request.userId())
-                    .message("Compra: " + juego.name())
-                    .tipo(TipoNotification.COMPRA)
-                    .gameId(juego.id())
-                    .build();
-            notificationRepository.save(notification);
-        }
+
+        request.juegos().stream()
+                .map(juego -> Notification.builder()
+                        .userId(request.userId())
+                        .message("Compra: " + juego.name())
+                        .tipo(TipoNotification.COMPRA)
+                        .gameId(juego.id())
+                        .build()
+                )
+                .forEach(notificationRepository::save);
     }
 }

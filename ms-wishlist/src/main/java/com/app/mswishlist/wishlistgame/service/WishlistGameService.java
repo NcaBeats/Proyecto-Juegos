@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,10 +38,10 @@ public class WishlistGameService {
     public WishListResponse getAllByUserId(Long userId) {
 
         ProfileResponse profile = profileClient.getProfileByUserId(userId);
-        wishlistService.getOrCreate(userId);
-        var games = wishlistService.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Wishlist no encontrada"))
-                .getGames()
+
+        Set<WishlistGame> wishlistGames = wishlistGameRepository.getAllByWishlistUserId(userId);
+
+        Set<WishlistGameResponse> games = wishlistGames
                 .stream()
                 .map(wg -> wishlistGameMapper.toResponse(
                         wg,
@@ -58,16 +59,15 @@ public class WishlistGameService {
     @Transactional
     public WishlistGameResponse addGame(Long userId, WishlistGameRequest request) {
 
+        Wishlist wishlist = wishlistService.getOrCreate(userId);
+
         if (wishlistGameRepository.existsByWishlistUserIdAndGameId(userId, request.gameId())) {
             throw new IllegalStateException("El juego ya está en la lista de deseos");
         }
 
-        Wishlist wishlist = wishlistService.getOrCreate(userId);
-
         JuegoResponse juego = juegoClient.getJuegoById(request.gameId());
 
-        WishlistGame wishlistGame =
-                wishlistGameMapper.toEntity(request, wishlist);
+        WishlistGame wishlistGame = wishlistGameMapper.toEntity(request, wishlist);
 
         wishlistGameRepository.save(wishlistGame);
 
@@ -77,7 +77,13 @@ public class WishlistGameService {
                 .tipo(TipoNotification.LISTA_DE_DESEOS)
                 .gameId(request.gameId())
                 .build();
-        notificationClient.createNotification(notificationRequest);
+        try {
+            notificationClient.createNotification(notificationRequest);
+        }
+        catch (Exception e) {
+            System.err.println("Error al enviar la notificación: " + e.getMessage());
+        }
+
 
         return wishlistGameMapper.toResponse(wishlistGame, juego);
     }
@@ -88,7 +94,7 @@ public class WishlistGameService {
         WishlistGame wishlistGame = wishlistGameRepository
                 .findByWishlistUserIdAndGameId(userId, gameId)
                 .orElseThrow(() ->
-                        new IllegalStateException("El juego no está en la lista de deseos"));
+                        new EntityNotFoundException("El juego no está en la lista de deseos"));
 
         wishlistGameRepository.delete(wishlistGame);
     }

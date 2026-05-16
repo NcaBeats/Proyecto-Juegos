@@ -25,6 +25,7 @@ public class Wishlist {
 
     @CreatedDate
     @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
     private Instant fechaCreacion;
 
     @OneToMany(mappedBy = "wishlist", cascade = CascadeType.ALL, orphanRemoval = true)

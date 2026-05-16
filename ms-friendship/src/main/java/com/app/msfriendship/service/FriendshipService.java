@@ -72,7 +72,7 @@ public class FriendshipService {
         if (!friendship.getFriendId().equals(userId)) {
             throw new IllegalArgumentException("No puedes aceptar esta solicitud");
         }
-        if (friendship.getStatus() != FriendshipStatus.PENDING) {
+        if (!friendship.getStatus().equals(FriendshipStatus.PENDING) ) {
             throw new IllegalStateException("La solicitud ya no está pendiente");
         }
 

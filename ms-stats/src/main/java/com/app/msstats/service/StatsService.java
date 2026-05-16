@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 
@@ -30,10 +29,18 @@ public class StatsService {
         var purchases = purchaseGameClient.getAllPurchasesByGameId(gameId);
         var reviews = reviewClient.getReviewsByGameId(gameId);
         var game = juegoClient.getJuego(gameId);
+
+        int copiasVendidas = purchases.stream()
+                .mapToInt(PurchaseGameResponse::cantidad)
+                .sum();
+        BigDecimal ventasTotales = game.precio()
+                .multiply(BigDecimal.valueOf(copiasVendidas));
+
         return GameStatsResponse.builder()
                 .gameId(gameId)
                 .gameName(game.nombre())
-                .ventasTotales(purchases.stream().mapToLong(PurchaseGameResponse::cantidad).sum())
+                .copiasVendidas(copiasVendidas)
+                .ventasTotales(ventasTotales)
                 .ratingPromedio(calculateAverageRating(reviews))
                 .build();
     }
@@ -41,22 +48,26 @@ public class StatsService {
         var purchases = purchaseGameClient.findAllByUserId(userId);
         var reviews = reviewClient.getReviewsByUserId(userId);
         var profile = profileClient.getProfileByUserId(userId);
+
+        BigDecimal dineroGastado = purchases.stream()
+                .map(PurchaseGameResponse::price)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                // Él reduce aplica una operación muchas veces sobre una colección
+                // y el add especifica esa operación
         return UserStatsResponse.builder()
                 .userId(userId)
                 .nickname(profile.nickname())
                 .avatar(profile.avatar())
                 .juegosComprados(purchases.size())
-                .dineroGastado(purchases.stream().map(PurchaseGameResponse::price).reduce(BigDecimal.ZERO, BigDecimal::add))
+                .dineroGastado(dineroGastado)
                 .promedioRatingDado(calculateAverageRating(reviews))
                 .build();
     }
 
-    private BigDecimal calculateAverageRating(List<ReviewResponse> reviews) {
-        if (reviews.isEmpty()) return BigDecimal.ZERO;
-        return BigDecimal.valueOf(reviews.stream()
+    private double calculateAverageRating(List<ReviewResponse> reviews) {
+        return (reviews.stream()
                 .mapToInt(ReviewResponse::rating)
                 .average()
-                .orElse(0.0))
-                .setScale(1, RoundingMode.DOWN);
+                .orElse(0.0));
     }
 }

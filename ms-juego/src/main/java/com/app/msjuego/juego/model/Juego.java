@@ -57,6 +57,7 @@ public class Juego {
 
     @CreatedDate
     @Column(name = "fecha_registro",nullable = false, updatable = false)
+    @Setter(AccessLevel.NONE)
     private Instant fechaRegistro;
 
     public void update(JuegoRequest request,Estudio estudio, List<Genero> generos, List<Plataforma> plataformas) {

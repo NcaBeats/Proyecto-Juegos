@@ -19,7 +19,7 @@ public interface JuegoMapper {
     JuegoResponse toResponse(Juego juego);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "fecha_registro", ignore = true)
+    @Mapping(target = "fechaRegistro", ignore = true)
     @Mapping(target = "nombre", source = "request.nombre")
     @Mapping(target = "descripcion", source = "request.descripcion")
     @Mapping(target = "precio", source = "request.precio")

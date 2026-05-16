@@ -14,5 +14,5 @@ public interface PurchaseMapper {
     Purchase toEntity(PurchaseRequest dto);
 
 
-    PurchaseResponse toDTO(Purchase purchase);
+    PurchaseResponse toResponse(Purchase purchase);
 }

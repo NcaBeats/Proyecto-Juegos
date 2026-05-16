@@ -9,7 +9,7 @@ public record UserStatsResponse(
         Long userId,
         String nickname,
         String avatar,
-        long juegosComprados,
+        int juegosComprados,
         BigDecimal dineroGastado,
-        BigDecimal promedioRatingDado
+        double promedioRatingDado
 ) {}

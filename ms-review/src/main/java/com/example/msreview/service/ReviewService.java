@@ -63,7 +63,13 @@ public class ReviewService {
                 .tipo(TipoNotification.REVIEW)
                 .gameId(reviewRequest.juegoId())
                 .build();
-        notificationClient.createNotification(notificationRequest);
+        try{
+            notificationClient.createNotification(notificationRequest);
+        }
+        catch (Exception e){
+            System.err.println("Error al enviar la notificación: " + e.getMessage());
+        }
+
 
         return reviewMapper.toResponse(savedReview, juegoResponse, profileResponse);
     }
@@ -73,8 +79,7 @@ public class ReviewService {
         review.update(reviewRequest);
         JuegoResponse juegoResponse = juegoClient.findById(review.getJuegoId());
         ProfileResponse profileResponse = profileClient.findByUserId(review.getUserId());
-        Review savedReview = reviewRepository.save(review);
-        return reviewMapper.toResponse(savedReview, juegoResponse, profileResponse);
+        return reviewMapper.toResponse(review, juegoResponse, profileResponse);
     }
     @Transactional
     public void delete(Long id) {

@@ -39,6 +39,7 @@ public class Review {
 
     @CreatedDate
     @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
     private Instant fechaCreacion;
 
     public void update (ReviewRequest request){

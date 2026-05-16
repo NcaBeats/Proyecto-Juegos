@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,12 +40,12 @@ public class PurchaseService {
 
     public Page<PurchaseResponse> findAllByUserId(Long userId, Pageable pageable) {
         return purchaseRepository.findAllByUserId(userId, pageable)
-                .map(purchaseMapper::toDTO);
+                .map(purchaseMapper::toResponse);
     }
 
     public Page<PurchaseResponse> findAll(Pageable pageable) {
         return purchaseRepository.findAll(pageable)
-                .map(purchaseMapper::toDTO);
+                .map(purchaseMapper::toResponse);
     }
 
     @Transactional
@@ -57,7 +56,6 @@ public class PurchaseService {
                 .map(juego -> juegoClient.getJuegoById(juego.gameId()))
                 .toList();
 
-
         juegos.stream()
                 .filter(j -> libraryClient.gameExists(dto.userId(), j.id()))
                 .findAny()
@@ -66,10 +64,12 @@ public class PurchaseService {
                 });
 
         List<GamePurchaseResponse> juegosNotification = juegos.stream()
-                .map(j -> GamePurchaseResponse.builder().id(j.id()).name(j.nombre()).precio(j.precio()).build())
+                .map(j -> GamePurchaseResponse.builder()
+                        .id(j.id())
+                        .name(j.nombre())
+                        .precio(j.precio())
+                        .build())
                 .toList();
-
-
 
         Purchase purchase = purchaseMapper.toEntity(dto);
 
@@ -96,30 +96,40 @@ public class PurchaseService {
 
         libraryClient.addGamesToLibrary(dto.userId(), gameIds);
 
+        String message = "Compra: " + String.join(", ",
+                juegosNotification.stream().map(GamePurchaseResponse::name).toList());
+        // fue para convertir una lista de strings a un solo String con una, concatenada para darle formato
+
         PurchaseNotificationRequest request = PurchaseNotificationRequest.builder()
                 .userId(dto.userId())
-                .message("Compra: " + juegosNotification.stream().map(GamePurchaseResponse::name).collect(Collectors.joining(", ")))
+                .message(message)
                 .tipo(TipoNotification.COMPRA)
                 .juegos(juegosNotification)
                 .build();
-        notificationClient.createNotification(request);
+        try{
+            notificationClient.createNotification(request);
+        }
+        catch (Exception e){
+            System.err.println("Error al enviar la notificación: " + e.getMessage());
+        }
+
         userClient.updateBalance(user.id(), total);
-        return purchaseMapper.toDTO(saved);
+        return purchaseMapper.toResponse(saved);
     }
 
     public List<PurchaseGameStatsResponse> findAllByGameIdForStats(Long gameId) {
+
         List<PurchaseGame> purchaseGames = purchaseGameRepository.findByGameId(gameId);
+        JuegoResponse juego = juegoClient.getJuegoById(gameId);
+
         return purchaseGames.stream()
-                .map(pg -> {
-                    JuegoResponse juego = juegoClient.getJuegoById(pg.getGameId());
-                    return PurchaseGameStatsResponse.builder()
-                            .userId(pg.getPurchase().getUserId())
-                            .gameId(pg.getGameId())
-                            .gameName(juego.nombre())
-                            .cantidad(1)
-                            .price(juego.precio())
-                            .build();
-                })
+                .map(pg -> PurchaseGameStatsResponse.builder()
+                        .userId(pg.getPurchase().getUserId())
+                        .gameId(gameId)
+                        .gameName(juego.nombre())
+                        .cantidad(1)
+                        .price(juego.precio())
+                        .build())
                 .toList();
     }
 
@@ -129,7 +139,7 @@ public class PurchaseService {
                 .map(pg -> {
                     JuegoResponse juego = juegoClient.getJuegoById(pg.getGameId());
                     return PurchaseGameStatsResponse.builder()
-                            .userId(pg.getPurchase().getUserId())
+                            .userId(userId)
                             .gameId(pg.getGameId())
                             .gameName(juego.nombre())
                             .cantidad(1)

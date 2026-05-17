@@ -95,4 +95,13 @@ public class FriendshipService {
         friendship.setStatus(FriendshipStatus.REJECTED);
         return friendshipMapper.toResponse(friendshipRepository.save(friendship));
     }
+    @Transactional
+    public void deleteFriendship(Long userId, Long friendshipId) {
+        Friendship friendship = friendshipRepository.findById(friendshipId)
+                .orElseThrow(() -> new EntityNotFoundException("Relación de amistad no encontrada"));
+        if (!friendship.getFriendId().equals(userId)||!friendship.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("No perteneces a esta relación de amistad");
+        }
+        friendshipRepository.delete(friendship);
+    }
 }

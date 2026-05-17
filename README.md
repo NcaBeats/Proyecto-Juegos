@@ -260,11 +260,11 @@ Al iniciar, las siguientes tablas tienen datos de ejemplo:
 
 ## ms-notification (Puerto: 8086)
 
-| Método | Endpoint                              | Descripción                                 |
-|--------|---------------------------------------|---------------------------------------------|
-| GET    | `/api/v1/notifications/user/{userId}` | Notificaciones de usuario                   |
-| POST   | `/api/v1/notifications`               | Crear notificación                          |
-| POST   | `/api/v1/notifications/purchase       | Crear notificación específica para purchase |
+| Método | Endpoint                         | Descripción                                 |
+|--------|----------------------------------|---------------------------------------------|
+| GET    | `/api/v1/notifications/{userId}` | Notificaciones de usuario                   |
+| POST   | `/api/v1/notifications`          | Crear notificación                          |
+| POST   | `/api/v1/notifications/purchase  | Crear notificación específica para purchase |
 
 ---
 
@@ -410,7 +410,7 @@ Este microservicio usa Feign para consultar datos de otros servicios y no tiene 
 
 - **ACTIVO**: Juego disponible
 - **NO_DISPONIBLE**: Juego no disponible
-- **PROXIMAMENTE**: Juego eliminado del catálogo
+- **PROXIMAMENTE**: Juego próximamente disponible
 
 ## Ratings de Reseñas
 

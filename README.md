@@ -4,38 +4,50 @@
 
 Sistema de gestión de videojuegos basado en una arquitectura de microservicios. Permite administrar juegos, usuarios, perfiles, wishlists, reseñas, compras, notificaciones, biblioteca de juegos, solicitudes de amistad y estadísticas.
 
-### Arquitectura
+## Arquitectura
 
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   ms-juego  │     │ ms-usuario  │     │ ms-profile  │
-│   Puerto:   │     │   Puerto:   │     │   Puerto:   │
-│    8080     │     │    8081     │     │    8082     │
-└─────────────┘     └─────────────┘     └─────────────┘
-        │                 │                   │
-        └─────────────────┼───────────────────┘
-                          │
-              ┌───────────┼───────────┐
-              │           │           │
-        ┌────────────┐ ┌──────────┐  ┌─────────────┐
-        │ ms-wishlist│ │ms-review │  │ ms-purchase │
-        │  Puerto:   │ │ Puerto:  │  │   Puerto:   │
-        │   8085     │ │ 8084     │  │     8083    │
-        └────────────┘ └──────────┘  └─────────────┘
-              │           │           │
-        ┌─────────────┐ ┌───────────────┐
-        │ms-library   │ │ms-notification│
-        │  Puerto:    │ │   Puerto:     │
-        │    8088     │ │     8086      │
-        └─────────────┘ └───────────────┘
-              │
-        ┌─────────────┐   ┌─────────────┐
-        │ms-friendship│   │   ms-stats  │
-        │  Puerto:    │   │   Puerto:   │
-        │    8089     │   │     8087    │
-        └─────────────┘   └─────────────┘
-```
+Tienes 10 microservicios, cada uno corriendo en su propio puerto:  
 
+- ms-juego (8080): Maneja el catálogo de juegos, estudios, géneros y plataformas. Es el núcleo donde están todos los juegos disponibles.  
+---
+- ms-usuario (8081): Gestiona los usuarios y su saldo.  
+---
+- ms-profile (8082): Perfiles de usuario, nickname, avatar, bio.  
+---
+- ms-wishlist (8085): Lista de deseos de cada usuario.  
+---
+- ms-review (8084): Sistema de reseñas y ratings.  
+---
+- ms-purchase (8083): Procesa las compras.  
+---
+- ms-notification (8086): Envía notificaciones al usuario cuando ocurre algo (compra, reseña, wishlist).  
+---
+- **ms-library (8088): La biblioteca personal de cada usuario, los juegos que ha comprado.  
+---
+- ms-friendship (8089): Sistema de amigos y solicitudes de amistad.  
+---
+- ms-stats (8087): Un servicio especial sin base de datos que consulta a los demás para dar estadísticas globales.    
+---
+
+###   Cómo se comunican?
+
+  Usan Feign Client para llamar a otros microservicios.  
+  Por ejemplo, cuando compras un juego, el servicio de purchase le avisa a:
+- ms-library para agregar los juegos a tu biblioteca  
+
+
+- ms-notification para decirte que compraste algo
+
+
+- ms-usuario para restarte el saldo
+
+
+### La base de datos
+  Cada microservicio tiene su propia base de datos PostgreSQL en Docker.  
+
+  Son 9 contenedores (ms-stats no tiene DB porque solo consulta).  
+  
+Cada uno con su propio puerto
 ## Pre-requisitos
 
 - **Java**: JDK 25 (Temurin)  

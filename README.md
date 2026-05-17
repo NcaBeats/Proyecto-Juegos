@@ -1,4 +1,4 @@
-# Práctica MicroServicios - Videojuegos
+# Proyecto MicroServicios - Videojuegos
 
 ## Descripción del Proyecto
 
@@ -77,18 +77,18 @@ Cada uno con su propio puerto
 
 ### PostgreSQL Containers
 
-| Microservicio   | Puerto | Base de Datos   | Schema          |
-|-----------------|--------|-----------------|-----------------|
-| ms-juego        | 5432   | db_juego        | db_juego        |
-| ms-usuario      | 5433   | db_usuario      | db_usuario      |
-| ms-profile      | 5434   | db_profile      | db_profile      |
-| ms-wishlist     | 5435   | db_wishlist     | db_wishlist     |
-| ms-review       | 5436   | db_review       | db_review       |
-| ms-purchase     | 5437   | db_purchase     | db_purchase     |
-| ms-notification | 5438   | db_notification | db_notification |
-| ms-library      | 5439   | db_library      | db_library      |
-| ms-friendship   | 5440   | db_friendship   | db_friendship   |
-| ms-stats        | -      | (sin DB)        | -               |
+| Microservicio   | Puerto | Base de Datos   |
+|-----------------|--------|-----------------|
+| ms-juego        | 5432   | db_juego        |
+| ms-usuario      | 5433   | db_usuario      |
+| ms-profile      | 5434   | db_profile      |
+| ms-wishlist     | 5435   | db_wishlist     |
+| ms-review       | 5436   | db_review       |
+| ms-purchase     | 5437   | db_purchase     |
+| ms-notification | 5438   | db_notification |
+| ms-library      | 5439   | db_library      |
+| ms-friendship   | 5440   | db_friendship   |
+| ms-stats        | -      | (sin DB)        |
 
 ## Cómo Iniciar el Proyecto
 

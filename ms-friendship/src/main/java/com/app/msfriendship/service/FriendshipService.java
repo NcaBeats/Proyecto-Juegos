@@ -72,7 +72,7 @@ public class FriendshipService {
         if (!friendship.getFriendId().equals(userId)) {
             throw new IllegalArgumentException("No puedes aceptar esta solicitud");
         }
-        if (friendship.getStatus() != FriendshipStatus.PENDING) {
+        if (!friendship.getStatus().equals(FriendshipStatus.PENDING) ) {
             throw new IllegalStateException("La solicitud ya no está pendiente");
         }
 
@@ -94,5 +94,14 @@ public class FriendshipService {
 
         friendship.setStatus(FriendshipStatus.REJECTED);
         return friendshipMapper.toResponse(friendshipRepository.save(friendship));
+    }
+    @Transactional
+    public void deleteFriendship(Long userId, Long friendshipId) {
+        Friendship friendship = friendshipRepository.findById(friendshipId)
+                .orElseThrow(() -> new EntityNotFoundException("Relación de amistad no encontrada"));
+        if (!friendship.getFriendId().equals(userId)||!friendship.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("No perteneces a esta relación de amistad");
+        }
+        friendshipRepository.delete(friendship);
     }
 }

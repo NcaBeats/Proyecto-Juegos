@@ -1,0 +1,166 @@
+version: '3.8'
+
+services:
+  postgres-ms-juego:
+    image: postgres:17-alpine
+    container_name: postgres-ms-juego
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: db_juego
+    volumes:
+      - postgres-juego-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-ms-usuario:
+    image: postgres:17-alpine
+    container_name: postgres-ms-usuario
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: db_usuario
+    volumes:
+      - postgres-usuario-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-ms-profile:
+    image: postgres:17-alpine
+    container_name: postgres-ms-profile
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: db_profile
+    volumes:
+      - postgres-profile-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-ms-wishlist:
+    image: postgres:17-alpine
+    container_name: postgres-ms-wishlist
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: db_wishlist
+    volumes:
+      - postgres-wishlist-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-ms-review:
+    image: postgres:17-alpine
+    container_name: postgres-ms-review
+    ports:
+      - "5436:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: db_review
+    volumes:
+      - postgres-review-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-ms-purchase:
+    image: postgres:17-alpine
+    container_name: postgres-ms-purchase
+    ports:
+      - "5437:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: db_purchase
+    volumes:
+      - postgres-purchase-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-ms-notification:
+    image: postgres:17-alpine
+    container_name: postgres-ms-notification
+    ports:
+      - "5438:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: db_notification
+    volumes:
+      - postgres-notification-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-ms-library:
+    image: postgres:17-alpine
+    container_name: postgres-ms-library
+    ports:
+      - "5439:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: db_library
+    volumes:
+      - postgres-library-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-ms-friendship:
+    image: postgres:17-alpine
+    container_name: postgres-ms-friendship
+    ports:
+      - "5440:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: db_friendship
+    volumes:
+      - postgres-friendship-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-juego-data:
+  postgres-usuario-data:
+  postgres-profile-data:
+  postgres-wishlist-data:
+  postgres-review-data:
+  postgres-purchase-data:
+  postgres-notification-data:
+  postgres-library-data:
+  postgres-friendship-data:

@@ -9,7 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.Instant;
 
 @Entity
-@Table(name = "library-game",uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "game_id"})})
+@Table(name = "library_game",uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "game_id"})})
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

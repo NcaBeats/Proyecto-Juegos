@@ -36,11 +36,11 @@ public class ProfileService {
         return profileMapper.toResponse(profile, userResponse);
     }
 
-    public Page<ProfileResponse> findByFiltros(Long userId,String nickname,Pageable pageable) {
-        return profileRepository.findByFiltros(userId,nickname,pageable).map(profile -> {
-            UserResponse userResponse = userClient.findById(profile.getUserId());
-            return profileMapper.toResponse(profile, userResponse);
-        });
+    public ProfileResponse findByNickname(String nickname) {
+        return profileRepository.findByNickname(nickname)
+                .map(profile -> profileMapper
+                        .toResponse(profile, userClient.findById(profile.getUserId()))
+        ).orElseThrow( () -> new EntityNotFoundException("Perfil no encontrado con el nickname: " + nickname) );
     }
 
     @Transactional
@@ -56,9 +56,9 @@ public class ProfileService {
 
     @Transactional
     public ProfileResponse update (ProfileRequest profileRequest){
-        UserResponse userResponse = userClient.findById(profileRequest.userId());
-        Profile profile = profileRepository.findByUserId(userResponse.id()).orElseThrow( ()-> new EntityNotFoundException("Perfil no encontrado con el id del usuario: " + userResponse.id()) );
+        Profile profile = profileRepository.findByUserId(profileRequest.userId()).orElseThrow( ()-> new EntityNotFoundException("Perfil no encontrado con el id del usuario: " + profileRequest.userId()) );
         profile.update(profileRequest);
+        UserResponse userResponse = userClient.findById(profileRequest.userId());
         return profileMapper.toResponse(profile,userResponse);
     }
 

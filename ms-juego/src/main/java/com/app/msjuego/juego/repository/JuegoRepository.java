@@ -8,7 +8,6 @@ import java.util.Optional;
 
 public interface JuegoRepository extends JpaRepository<Juego, Long> {
     Optional<Juego> findByNombre(String nombre);
-    Optional<Juego> findByEstudioId(Long id);
     Page<Juego> getAllByEstudioId(Long id, Pageable pageable);
     Page<Juego> getAllByGenerosId(Long id, Pageable pageable);
     Page<Juego> getAllByPlataformasId(Long id, Pageable pageable);

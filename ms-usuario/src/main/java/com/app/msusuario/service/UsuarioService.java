@@ -26,11 +26,19 @@ public class UsuarioService {
     }
     public UsuarioResponse findById(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário no encontrado con el id " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el id " + id));
         return usuarioMapper.toResponse(usuario);
     }
-    public Page<UsuarioResponse> findByFiltros(String nombre,String email,Pageable pageable) {
-        return usuarioRepository.findByFiltros(nombre,email,pageable).map(usuarioMapper::toResponse);
+    public UsuarioResponse findByEmail(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el email " + email) );
+        return usuarioMapper.toResponse(usuario);
+    }
+
+    public UsuarioResponse findByNombre(String nombre) {
+        Usuario usuario = usuarioRepository.findByNombre(nombre)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con el nombre " + nombre) );
+        return usuarioMapper.toResponse(usuario);
     }
 
     @Transactional
@@ -57,13 +65,15 @@ public class UsuarioService {
     public void restarSaldo(Long userId, BigDecimal monto) {
 
         Usuario user = usuarioRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
         if (user.getSaldo().compareTo(monto) < 0) {
+            // si el saldo es mayor que el monto, devuelve 1,
+            // si es igual devuelve 0,
+            // si es menor devuelve -1
+            // se usa compareTo porque BigDecimal es un Objeto
             throw new RuntimeException("saldo insuficiente");
         }
         user.setSaldo(user.getSaldo().subtract(monto));
-
-        usuarioRepository.save(user);
     }
 }

@@ -34,6 +34,7 @@ public class Usuario {
 
     @CreatedDate
     @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
     private Instant fecha_creacion;
 
     public void update(UsuarioRequest request){

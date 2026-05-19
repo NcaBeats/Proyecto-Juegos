@@ -36,6 +36,7 @@ public class Profile {
 
     @CreatedDate
     @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
     private Instant fechaRegistro;
 
     public void update (ProfileRequest request) {

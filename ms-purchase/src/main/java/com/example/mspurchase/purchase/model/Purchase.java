@@ -36,5 +36,6 @@ public class Purchase {
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
+    @Setter(AccessLevel.NONE)
     private Instant fechaCompra;
 }

@@ -21,7 +21,7 @@ public class UsuarioMapper {
                 .nombre(usuario.getNombre())
                 .email(usuario.getEmail())
                 .saldo(usuario.getSaldo())
-                .fecha_registro(usuario.getFecha_creacion())
+                .fecha_creacion(usuario.getFecha_creacion())
                 .build();
     }
 }

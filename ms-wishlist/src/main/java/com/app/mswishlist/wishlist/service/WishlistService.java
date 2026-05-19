@@ -6,7 +6,6 @@ import com.app.mswishlist.wishlist.repository.WishlistRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,9 +25,5 @@ public class WishlistService {
                                 .build()
                 ));
 
-    }
-
-    public Optional<Wishlist> findById(Long userId) {
-        return wishlistRepository.findById(userId);
     }
 }

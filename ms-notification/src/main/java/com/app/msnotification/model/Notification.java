@@ -34,5 +34,6 @@ public class Notification {
 
     @CreatedDate
     @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
     private Instant fechaCreacion;
 }

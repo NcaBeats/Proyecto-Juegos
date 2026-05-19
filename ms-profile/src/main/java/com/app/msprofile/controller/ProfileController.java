@@ -27,14 +27,9 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.findById(userId));
     }
 
-    @GetMapping("/buscar")
-    public ResponseEntity<Page<ProfileResponse>> buscar(
-            @RequestParam(required = false) Long userId,
-            @RequestParam(required = false) String nickname,
-            Pageable pageable
-    )
-    {
-        return ResponseEntity.ok(profileService.findByFiltros(userId,nickname,pageable));
+    @GetMapping("/nickname/{nickname}")
+    public ResponseEntity<ProfileResponse> buscar(@PathVariable String nickname) {
+        return ResponseEntity.ok(profileService.findByNickname(nickname));
     }
 
     @PostMapping

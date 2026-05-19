@@ -1,12 +1,9 @@
 package com.example.mslibrary.library.controller;
 
 import com.example.mslibrary.library.dto.LibraryResponse;
-import com.example.mslibrary.librarygame.dto.LibraryGameRequest;
-import com.example.mslibrary.librarygame.dto.LibraryGameResponse;
 import com.example.mslibrary.librarygame.service.LibraryGameService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,9 +21,9 @@ public class LibraryController {
     }
 
     @PostMapping("/{userId}/games")
-    public ResponseEntity<Void> addGames(@PathVariable Long userId, @RequestBody List<Long> gameIds) {
+    public ResponseEntity<Void> addGames(@PathVariable Long userId,@Valid @RequestBody List<Long> gameIds) {
         libraryGameService.addGames(userId, gameIds);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{userId}/game/{gameId}/exists")

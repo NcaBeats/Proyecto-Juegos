@@ -26,6 +26,7 @@ public class NotificationController {
     public ResponseEntity<NotificationResponse> save(@Valid @RequestBody NotificationRequest notificationRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(notificationService.save(notificationRequest));
     }
+    // hay 2 post porque uno acepta notificaciones donde hay un juego y el otro es específico para purchase, ya que permite compras de más de 1 juego
     @PostMapping("/purchase")
     public ResponseEntity<Void> savePurchaseNotification(@Valid @RequestBody PurchaseNotificationRequest request) {
         notificationService.savePurchaseNotification(request);

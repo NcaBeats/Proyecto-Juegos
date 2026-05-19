@@ -10,12 +10,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-
-    @Query("SELECT e FROM Usuario e WHERE " +
-            "(:nombre IS NULL OR e.nombre = :nombre) AND " +
-            "(:email IS NULL OR e.email = :email)")
-    Page<Usuario> findByFiltros(@Param("nombre") String nombre,
-                                @Param("email") String email,
-                                Pageable pageable);
-
+    Optional<Usuario> findByEmail(String email);
+    Optional<Usuario> findByNombre(String nombre);
 }

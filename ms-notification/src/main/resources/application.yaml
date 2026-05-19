@@ -3,31 +3,21 @@ spring:
     name: ms-notification
 
   datasource:
-    url:  jdbc:h2:mem:db_notification
-    driver-class-name: org.h2.Driver
+    url: jdbc:postgresql://localhost:5438/db_notification
+    driver-class-name: org.postgresql.Driver
     username: postgres
     password: 1234
-  #  jdbc:postgresql://localhost:5432/db_review
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
 
-#  flyway:
-#    enabled: true
-#    locations: classpath:db/migration
-#
-#logging:
-#  level:
-#    org.flywaydb: DEBUG
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    clean-disabled: false
+    baseline-on-migrate: true
 
 server:
   port: 8086

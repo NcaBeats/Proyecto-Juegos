@@ -27,15 +27,17 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.findById(id));
     }
-    @GetMapping("/buscar")
-    public ResponseEntity<Page<UsuarioResponse>> buscar(
-            @RequestParam(required = false) String nombre,
-            @RequestParam(required = false) String email,
-            Pageable pageable
-    )
-    {
-    return ResponseEntity.ok(usuarioService.findByFiltros(nombre,email,pageable));
+
+    @GetMapping("/buscar/email/{email}")
+    public ResponseEntity<UsuarioResponse> findByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(usuarioService.findByEmail(email));
     }
+
+    @GetMapping("/buscar/nombre/{nombre}")
+    public ResponseEntity<UsuarioResponse> findByNombre(@PathVariable String nombre) {
+        return ResponseEntity.ok(usuarioService.findByNombre(nombre));
+    }
+
     @PostMapping
     public ResponseEntity<UsuarioResponse> save(@Valid @RequestBody UsuarioRequest usuarioRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.save(usuarioRequest));

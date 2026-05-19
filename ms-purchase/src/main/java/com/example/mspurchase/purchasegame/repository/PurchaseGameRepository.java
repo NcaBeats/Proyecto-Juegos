@@ -10,6 +10,5 @@ import java.util.List;
 @Repository
 public interface PurchaseGameRepository extends JpaRepository<PurchaseGame, Long> {
     List<PurchaseGame> findByGameId(Long gameId);
-    @Query("SELECT pg FROM PurchaseGame pg JOIN FETCH pg.purchase p WHERE p.userId = :userId")
     List<PurchaseGame> findByPurchaseUserId(@Param("userId") Long userId);
 }

@@ -19,6 +19,7 @@ import com.example.mspurchase.purchasegame.model.PurchaseGame;
 import com.example.mspurchase.purchasegame.repository.PurchaseGameRepository;
 import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
 public class PurchaseService {
     private final PurchaseRepository purchaseRepository;
@@ -39,21 +41,28 @@ public class PurchaseService {
     private final LibraryClient libraryClient;
 
     public Page<PurchaseResponse> findAllByUserId(Long userId, Pageable pageable) {
+        log.debug("Buscando compras de userId={} página={} tamaño={}", userId, pageable.getPageNumber(), pageable.getPageSize());
         return purchaseRepository.findAllByUserId(userId, pageable)
                 .map(purchaseMapper::toResponse);
     }
 
     public Page<PurchaseResponse> findAll(Pageable pageable) {
+        log.debug("Buscando todas las compras - página={} tamaño={}", pageable.getPageNumber(), pageable.getPageSize());
         return purchaseRepository.findAll(pageable)
                 .map(purchaseMapper::toResponse);
     }
 
     @Transactional
     public PurchaseResponse createPurchase(PurchaseRequest dto) {
+        log.info("Creando compra - userId={} juegosCount={}", dto.userId(), dto.juegos().size());
+        log.debug("Llamando a UserClient.getUserById userId={}", dto.userId());
         UserResponse user = userClient.getUserById(dto.userId());
         List<JuegoResponse> juegos = dto.juegos()
                 .stream()
-                .map(juego -> juegoClient.getJuegoById(juego.gameId()))
+                .map(juego -> {
+                    log.debug("Llamando a JuegoClient.getJuegoById gameId={}", juego.gameId());
+                    return juegoClient.getJuegoById(juego.gameId());
+                })
                 .toList();
 
         juegos.stream()
@@ -62,6 +71,8 @@ public class PurchaseService {
                 .ifPresent(j -> {
                     throw new EntityExistsException("Ya tienes el juego: " + j.nombre());
                 });
+
+        log.debug("Juegos obtenidos para la compra userId={} juegos={}", dto.userId(), juegos.stream().map(JuegoResponse::id).toList());
 
         List<GamePurchaseResponse> juegosNotification = juegos.stream()
                 .map(j -> GamePurchaseResponse.builder()
@@ -84,6 +95,8 @@ public class PurchaseService {
         BigDecimal total = juegos.stream().map(JuegoResponse::precio).reduce(BigDecimal.ZERO, BigDecimal::add);
         purchase.setTotalPrecio(total);
 
+        log.info("Total calculado para userId={} total={}", dto.userId(), total);
+
         if (user.saldo().compareTo(purchase.getTotalPrecio()) < 0) {
             throw new RuntimeException("saldo insuficiente");
         }
@@ -94,6 +107,7 @@ public class PurchaseService {
                 .map(JuegoResponse::id)
                 .toList();
 
+        log.debug("Llamando a LibraryClient.addGamesToLibrary userId={} gameIds={}", dto.userId(), gameIds);
         libraryClient.addGamesToLibrary(dto.userId(), gameIds);
 
         String message = "Compra: " + String.join(", ",
@@ -107,20 +121,26 @@ public class PurchaseService {
                 .juegos(juegosNotification)
                 .build();
         try{
+            log.debug("Llamando a NotificationClient.createNotification userId={}", dto.userId());
             notificationClient.createNotification(request);
+            log.info("Notificación de compra enviada para userId={}", dto.userId());
         }
         catch (Exception e){
-            System.err.println("Error al enviar la notificación: " + e.getMessage());
+            log.warn("Error al enviar la notificación para userId={}: {}", dto.userId(), e.getMessage());
         }
 
+        log.debug("Llamando a UserClient.updateBalance userId={} monto={}", user.id(), total);
         userClient.updateBalance(user.id(), total);
+        log.info("Compra finalizada y guardada id={} userId={}", saved.getId(), dto.userId());
         return purchaseMapper.toResponse(saved);
     }
 
     public List<PurchaseGameStatsResponse> findAllByGameIdForStats(Long gameId) {
+        log.debug("Obteniendo estadísticas de compra para gameId={}", gameId);
 
         List<PurchaseGame> purchaseGames = purchaseGameRepository.findByGameId(gameId);
         JuegoResponse juego = juegoClient.getJuegoById(gameId);
+        log.debug("Encontradas {} compras para gameId={} (gameName={})", purchaseGames.size(), gameId, juego.nombre());
 
         return purchaseGames.stream()
                 .map(pg -> PurchaseGameStatsResponse.builder()
@@ -134,7 +154,9 @@ public class PurchaseService {
     }
 
     public List<PurchaseGameStatsResponse> findAllByUserIdForStats(Long userId) {
+        log.debug("Obteniendo estadísticas de compras por userId={}", userId);
         List<PurchaseGame> purchaseGames = purchaseGameRepository.findByPurchaseUserId(userId);
+        log.debug("Encontradas {} compras para userId={}", purchaseGames.size(), userId);
         return purchaseGames.stream()
                 .map(pg -> {
                     JuegoResponse juego = juegoClient.getJuegoById(pg.getGameId());

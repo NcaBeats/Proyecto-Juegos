@@ -10,6 +10,7 @@ import com.example.mslibrary.librarygame.repository.LibraryGameRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
 public class LibraryGameService {
     private final LibraryGameRepository libraryGameRepository;
@@ -26,6 +28,7 @@ public class LibraryGameService {
     private final JuegoClient juegoClient;
 
     public LibraryResponse findAllByUserId (Long userId) {
+        log.debug("Obteniendo biblioteca completa para userId={}", userId);
         Library library= libraryService.getOrCreate(userId);
         var games = libraryService.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Library no encontrada"))
@@ -36,6 +39,7 @@ public class LibraryGameService {
                         juegoClient.findById(lg.getGameId())
                 ))
                 .collect(Collectors.toSet());
+        log.debug("Se encontraron {} juegos en la biblioteca de userId={}", games.size(), userId);
         return LibraryResponse.builder()
                 .userId(userId)
                 .games(games)
@@ -45,6 +49,7 @@ public class LibraryGameService {
 
     @Transactional
     public void addGames(Long userId, List<Long> gameIds) {
+        log.info("Añadiendo juegos a la biblioteca userId={} gameIds={}", userId, gameIds);
 
         Library library = libraryService.getOrCreate(userId);
 
@@ -60,6 +65,7 @@ public class LibraryGameService {
                     .build();
 
             libraryGameRepository.save(libraryGame);
+            log.info("Juego añadido a la biblioteca userId={} gameId={}", userId, gameId);
         });
     }
 
@@ -69,8 +75,10 @@ public class LibraryGameService {
 
     @Transactional
     public void deleteGame (Long userId, Long gameId) {
+        log.info("Eliminando juego de la biblioteca userId={} gameId={}", userId, gameId);
         LibraryGame libraryGame = libraryGameRepository.findByLibraryUserIdAndGameId(userId, gameId)
                 .orElseThrow(() -> new EntityNotFoundException("El juego no se encuentra en la biblioteca"));
         libraryGameRepository.delete(libraryGame);
+        log.info("Juego eliminado de la biblioteca userId={} gameId={}", userId, gameId);
     }
 }

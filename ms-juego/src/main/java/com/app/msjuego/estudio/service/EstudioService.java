@@ -22,7 +22,7 @@ public class EstudioService {
     private final EstudioMapper estudioMapper;
 
     public EstudioResponse findById(Long id) {
-        log.info("Buscando estudio con id: {}",id);
+        log.debug("Buscando estudio con id: {}",id);
         Estudio estudio = estudioRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Estudio no encontrado con id: " + id));
         log.info("Estudio con id {} encontrado", id);
@@ -30,7 +30,7 @@ public class EstudioService {
     }
 
     public Page<EstudioResponse> findAll(Pageable pageable) {
-        log.info("Buscando página {} de estudios (Tamaño de página: {})",pageable.getPageNumber(),pageable.getPageSize());
+        log.debug("Buscando página {} de estudios (Tamaño de página: {})",pageable.getPageNumber(),pageable.getPageSize());
         return estudioRepository.findAll(pageable).map(estudioMapper::toResponse);
     }
 

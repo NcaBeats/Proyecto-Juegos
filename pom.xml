@@ -31,7 +31,9 @@
     <module>ms-stats</module>
     <module>ms-friendship</module>
     <module>ms-library</module>
+    <module>common</module>
   </modules>
+
 
 <dependencyManagement>
   <dependencies>
@@ -42,6 +44,11 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+      <version>7.0.7</version>
+    </dependency>
+    <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct</artifactId>
       <version>${mapstruct.version}</version>
@@ -50,6 +57,11 @@
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct-processor</artifactId>
       <version>${mapstruct.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.app</groupId>
+      <artifactId>common</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </dependencyManagement>

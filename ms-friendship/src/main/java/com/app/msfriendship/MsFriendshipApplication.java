@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication(scanBasePackages = {
         "com.app.msfriendship",
-        "com.app.common"
+        "com.app.exception"
 })
 @EnableFeignClients
 public class MsFriendshipApplication {

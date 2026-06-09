@@ -22,6 +22,10 @@
     
     <dependencies>
         <dependency>
+            <groupId>net.datafaker</groupId>
+            <artifactId>datafaker</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.app</groupId>
             <artifactId>common</artifactId>
         </dependency>

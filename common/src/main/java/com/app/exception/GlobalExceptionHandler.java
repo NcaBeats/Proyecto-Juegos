@@ -4,6 +4,7 @@ import com.app.exception.custom.ErrorResponse;
 import jakarta.persistence.EntityExistsException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -99,6 +100,20 @@ public class GlobalExceptionHandler {
                 Instant.now()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicate(DataIntegrityViolationException ex, HttpServletRequest request) {
+        log.warn("Conflicto de datos; {} - en la ruta: {} - IP: {}",
+                ex.getMessage(),
+                request.getRequestURI(),
+                request.getRemoteAddr());
+        ErrorResponse errorResponse = new ErrorResponse(
+                ex.getMessage(),
+                409,
+                Instant.now()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+
     }
     
 }

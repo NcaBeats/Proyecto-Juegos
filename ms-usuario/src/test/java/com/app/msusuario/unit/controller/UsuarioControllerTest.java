@@ -1,10 +1,7 @@
 package com.app.msusuario.unit.controller;
 
 import com.app.msusuario.controller.UsuarioController;
-import com.app.msusuario.dto.UsuarioRequest;
-import com.app.msusuario.dto.UsuarioResponse;
 import com.app.msusuario.service.UsuarioService;
-import com.app.msusuario.support.UsuarioFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 
+import static com.app.msusuario.support.UsuarioFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -25,8 +23,7 @@ import static org.mockito.Mockito.when;
 public class UsuarioControllerTest {
 
     private static final Pageable PAGEABLE = PageRequest.of(0, 10);
-    private static final UsuarioResponse USER_RESPONSE = UsuarioFactory.createUsuarioResponse();
-    private static final UsuarioRequest USER_REQUEST = UsuarioFactory.createUsuarioRequest();
+
 
     @Mock
     private UsuarioService usuarioService;

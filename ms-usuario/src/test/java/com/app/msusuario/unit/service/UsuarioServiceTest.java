@@ -29,7 +29,6 @@ import static org.mockito.Mockito.*;
 public class UsuarioServiceTest {
     private static final Pageable PAGEABLE = PageRequest.of(0, 10);
 
-
     @Mock
     UsuarioRepository usuarioRepository;
     @Mock
@@ -141,7 +140,8 @@ public class UsuarioServiceTest {
     }
     @Test
     void update_UserUpdated_ReturnUserResponse () {
-        Usuario usuarioSpy = spy(USER_ENTITY);
+        Usuario usuario = createUsuarioEntity();
+        Usuario usuarioSpy = spy(usuario);
         when(usuarioRepository.findById(USER_RESPONSE.id())).thenReturn(Optional.of(usuarioSpy));
         when(usuarioMapper.toResponse(usuarioSpy)).thenReturn(USER_RESPONSE);
 
@@ -171,27 +171,25 @@ public class UsuarioServiceTest {
         verify(usuarioRepository, never()).delete(any());
     }
     @Test
-    void restarSaldo_SaldoRestado() {
-        Usuario usuario = Usuario.builder()
-                .id(ID).nombre(NOMBRE).email(EMAIL).saldo(BigDecimal.valueOf(500)).build();
+    void subtractBalance_ValidAmount_BalanceDecremented() {
+        Usuario usuario = createUsuarioEntity(ID, NOMBRE, EMAIL, SALDO);
 
         when(usuarioRepository.findById(ID)).thenReturn(Optional.of(usuario));
 
         usuarioService.restarSaldo(ID, BigDecimal.valueOf(100));
 
-        assertEquals(BigDecimal.valueOf(400.00), usuario.getSaldo());
+        assertEquals(0, usuario.getSaldo().compareTo(BigDecimal.valueOf(400)));
     }
     @Test
-    void restarSaldo_UserNotFound_ReturnException() {
+    void subtractBalance_UserNotFound_ReturnException() {
         when(usuarioRepository.findById(ID)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class,
                 () -> usuarioService.restarSaldo(ID, BigDecimal.valueOf(100)));
     }
     @Test
-    void restarSaldo_SaldoInsuficiente_ReturnException() {
-        Usuario usuario = Usuario.builder()
-                .id(ID).nombre(NOMBRE).email(EMAIL).saldo(BigDecimal.valueOf(50)).build();
+    void subtractBalance_InvalidAmount_ReturnException() {
+        Usuario usuario = createUsuarioEntity(ID, NOMBRE, EMAIL, BigDecimal.valueOf(50));
 
         when(usuarioRepository.findById(ID)).thenReturn(Optional.of(usuario));
 

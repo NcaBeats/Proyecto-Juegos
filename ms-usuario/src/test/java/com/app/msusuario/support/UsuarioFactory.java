@@ -28,6 +28,16 @@ public class UsuarioFactory {
 
     private static final Faker faker = new Faker(Locale.of("es"));
 
+    public static Usuario createUsuarioEntity() {
+        return Usuario.builder()
+                .id(ID).nombre(NOMBRE).email(EMAIL).saldo(SALDO).build();
+    }
+
+    public static Usuario createUsuarioEntity(Long id, String nombre, String email, BigDecimal saldo) {
+        return Usuario.builder()
+                .id(id).nombre(nombre).email(email).saldo(saldo).build();
+    }
+
     public static UsuarioRequest createUsuarioRequestFaker() {
         return new UsuarioRequest(
                 faker.name().firstName(),

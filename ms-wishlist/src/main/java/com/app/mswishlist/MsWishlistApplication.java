@@ -5,7 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {
+        "com.app.mswishlist",
+        "com.app.exception"
+})
 @EnableJpaAuditing
 @EnableFeignClients
 public class MsWishlistApplication {

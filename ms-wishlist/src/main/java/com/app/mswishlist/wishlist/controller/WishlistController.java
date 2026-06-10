@@ -6,28 +6,33 @@ import com.app.mswishlist.wishlistgame.service.WishlistGameService;
 import com.app.mswishlist.wishlist.dto.WishListResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/api/v1/wishlists")
 public class WishlistController {
     private final WishlistGameService wishlistGameService;
 
     @GetMapping("/{userId}")
     public ResponseEntity<WishListResponse> getAllByUserId(@PathVariable Long userId) {
+        log.debug("GET /api/v1/wishlists/{} - obteniendo wishlist", userId);
         return ResponseEntity.ok(wishlistGameService.getAllByUserId(userId));
     }
 
     @PostMapping("/{userId}")
     public ResponseEntity<WishlistGameResponse> addGame(@PathVariable Long userId, @RequestBody @Valid WishlistGameRequest wishlistGameRequest) {
+        log.info("POST /api/v1/wishlists/{} - añadiendo juego gameId={}", userId, wishlistGameRequest.gameId());
         return ResponseEntity.status(HttpStatus.CREATED).body(wishlistGameService.addGame(userId, wishlistGameRequest));
     }
 
     @DeleteMapping("/{userId}/{gameId}")
     public ResponseEntity<Void> deleteGame(@PathVariable Long userId, @PathVariable Long gameId) {
+        log.info("DELETE /api/v1/wishlists/{}/{} - eliminando juego", userId, gameId);
         wishlistGameService.deleteGame(userId, gameId);
         return ResponseEntity.noContent().build();
     }

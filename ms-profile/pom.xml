@@ -32,6 +32,10 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
+            <groupId>com.app</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-h2console</artifactId>
         </dependency>

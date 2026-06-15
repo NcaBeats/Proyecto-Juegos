@@ -24,13 +24,13 @@ public class UsuarioMapperTest {
     }
     @Test
     void toResponse_ValidEntity_ReturnUserResponse(){
-        var result = usuarioMapper.toResponse(USER_ENTITY);
+        var result = usuarioMapper.toResponse(createUsuarioEntity());
         assertNotNull(result);
-        assertEquals(USER_ENTITY.getId(),result.id());
-        assertEquals(USER_ENTITY.getNombre(),result.nombre());
-        assertEquals(USER_ENTITY.getEmail(),result.email());
-        assertEquals(USER_ENTITY.getSaldo(),result.saldo());
-        assertEquals(USER_ENTITY.getFecha_creacion(),result.fecha_creacion());
+        assertEquals(createUsuarioEntity().getId(),result.id());
+        assertEquals(createUsuarioEntity().getNombre(),result.nombre());
+        assertEquals(createUsuarioEntity().getEmail(),result.email());
+        assertEquals(createUsuarioEntity().getSaldo(),result.saldo());
+        assertEquals(createUsuarioEntity().getFecha_creacion(),result.fecha_creacion());
     }
 
 }

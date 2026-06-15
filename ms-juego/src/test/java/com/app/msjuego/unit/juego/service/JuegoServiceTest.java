@@ -1,4 +1,4 @@
-package com.app.msjuego.unit.service;
+package com.app.msjuego.unit.juego.service;
 
 import com.app.msjuego.estudio.model.Estudio;
 import com.app.msjuego.genero.model.Genero;
@@ -25,7 +25,10 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
+import static com.app.msjuego.support.EstudioFactory.createEstudioEntity;
+import static com.app.msjuego.support.GeneroFactory.createGeneroEntity;
 import static com.app.msjuego.support.JuegoFactory.*;
+import static com.app.msjuego.support.PlataformaFactory.createPlataformaEntity;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -50,8 +53,9 @@ public class JuegoServiceTest {
 
     @Test
     void findById_Found_ReturnResponse() {
-        when(juegoRepository.findById(ID)).thenReturn(Optional.of(JUEGO_ENTITY));
-        when(juegoMapper.toResponse(JUEGO_ENTITY)).thenReturn(JUEGO_RESPONSE);
+        Juego juego = createJuegoEntityFaker();
+        when(juegoRepository.findById(ID)).thenReturn(Optional.of(juego));
+        when(juegoMapper.toResponse(juego)).thenReturn(JUEGO_RESPONSE);
 
         var result = juegoService.findById(ID);
 
@@ -68,10 +72,11 @@ public class JuegoServiceTest {
 
     @Test
     void findAll_ReturnPage() {
-        List<Juego> list = List.of(JUEGO_ENTITY);
+        Juego juego = createJuegoEntityFaker();
+        List<Juego> list = List.of(juego);
         Page<Juego> page = new PageImpl<>(list, PAGEABLE, list.size());
         when(juegoRepository.findAll(PAGEABLE)).thenReturn(page);
-        when(juegoMapper.toResponse(JUEGO_ENTITY)).thenReturn(JUEGO_RESPONSE);
+        when(juegoMapper.toResponse(juego)).thenReturn(JUEGO_RESPONSE);
 
         var result = juegoService.findAll(PAGEABLE);
 
@@ -85,16 +90,17 @@ public class JuegoServiceTest {
     @Test
     void save_Success_ReturnResponse() {
         JuegoRequest req = JUEGO_REQUEST;
-        Estudio estudio = createEstudio();
-        List<Genero> generos = List.of(createGenero(GENERO_ID));
-        List<Plataforma> plataformas = List.of(createPlataforma(PLATAFORMA_ID));
+        Juego juego = createJuegoEntity();
+        Estudio estudio = createEstudioEntity();
+        List<Genero> generos = List.of(createGeneroEntity());
+        List<Plataforma> plataformas = List.of(createPlataformaEntity());
 
         when(estudioRepository.findById(req.estudioId())).thenReturn(Optional.of(estudio));
         when(generoRepository.findAllById(req.generoIds())).thenReturn(generos);
         when(plataformaRepository.findAllById(req.plataformaIds())).thenReturn(plataformas);
-        when(juegoMapper.toEntity(req, estudio, generos, plataformas)).thenReturn(JUEGO_ENTITY);
-        when(juegoRepository.save(JUEGO_ENTITY)).thenReturn(JUEGO_ENTITY);
-        when(juegoMapper.toResponse(JUEGO_ENTITY)).thenReturn(JUEGO_RESPONSE);
+        when(juegoMapper.toEntity(req, estudio, generos, plataformas)).thenReturn(juego);
+        when(juegoRepository.save(juego)).thenReturn(juego);
+        when(juegoMapper.toResponse(juego)).thenReturn(JUEGO_RESPONSE);
 
         var result = juegoService.save(req);
 
@@ -111,8 +117,9 @@ public class JuegoServiceTest {
 
     @Test
     void findByNombre_Found_ReturnResponse() {
-        when(juegoRepository.findByNombre(JUEGO_REQUEST.nombre())).thenReturn(Optional.of(JUEGO_ENTITY));
-        when(juegoMapper.toResponse(JUEGO_ENTITY)).thenReturn(JUEGO_RESPONSE);
+        Juego juego = createJuegoEntityFaker();
+        when(juegoRepository.findByNombre(JUEGO_REQUEST.nombre())).thenReturn(Optional.of(juego));
+        when(juegoMapper.toResponse(juego)).thenReturn(JUEGO_RESPONSE);
 
         var result = juegoService.findByNombre(JUEGO_REQUEST.nombre());
 
@@ -128,10 +135,11 @@ public class JuegoServiceTest {
 
     @Test
     void getAllByEstudioId_ReturnsPage() {
-        List<Juego> list = List.of(JUEGO_ENTITY);
+        Juego juego = createJuegoEntity();
+        List<Juego> list = List.of(juego);
         Page<Juego> page = new PageImpl<>(list, PAGEABLE, list.size());
         when(juegoRepository.getAllByEstudioId(ESTUDIO_ID, PAGEABLE)).thenReturn(page);
-        when(juegoMapper.toResponse(JUEGO_ENTITY)).thenReturn(JUEGO_RESPONSE);
+        when(juegoMapper.toResponse(juego)).thenReturn(JUEGO_RESPONSE);
 
         var result = juegoService.getAllByEstudioId(ESTUDIO_ID, PAGEABLE);
 
@@ -142,10 +150,11 @@ public class JuegoServiceTest {
 
     @Test
     void getAllByGenerosId_ReturnsPage() {
-        List<Juego> list = List.of(JUEGO_ENTITY);
+        Juego juego = createJuegoEntity();
+        List<Juego> list = List.of(juego);
         Page<Juego> page = new PageImpl<>(list, PAGEABLE, list.size());
         when(juegoRepository.getAllByGenerosId(GENERO_ID, PAGEABLE)).thenReturn(page);
-        when(juegoMapper.toResponse(JUEGO_ENTITY)).thenReturn(JUEGO_RESPONSE);
+        when(juegoMapper.toResponse(juego)).thenReturn(JUEGO_RESPONSE);
 
         var result = juegoService.getAllByGenerosId(GENERO_ID, PAGEABLE);
 
@@ -155,10 +164,11 @@ public class JuegoServiceTest {
 
     @Test
     void getAllByPlataformasId_ReturnsPage() {
-        List<Juego> list = List.of(JUEGO_ENTITY);
+        Juego juego = createJuegoEntity();
+        List<Juego> list = List.of(juego);
         Page<Juego> page = new PageImpl<>(list, PAGEABLE, list.size());
         when(juegoRepository.getAllByPlataformasId(PLATAFORMA_ID, PAGEABLE)).thenReturn(page);
-        when(juegoMapper.toResponse(JUEGO_ENTITY)).thenReturn(JUEGO_RESPONSE);
+        when(juegoMapper.toResponse(juego)).thenReturn(JUEGO_RESPONSE);
 
         var result = juegoService.getAllByPlataformasId(PLATAFORMA_ID, PAGEABLE);
 
@@ -170,9 +180,9 @@ public class JuegoServiceTest {
     void update_Success_ReturnResponse() {
         JuegoRequest req = JUEGO_REQUEST;
         Juego entity = createJuegoEntity();
-        Estudio estudio = createEstudio();
-        List<Genero> generos = List.of(createGenero(GENERO_ID));
-        List<Plataforma> plataformas = List.of(createPlataforma(PLATAFORMA_ID));
+        Estudio estudio = createEstudioEntity();
+        List<Genero> generos = List.of(createGeneroEntity());
+        List<Plataforma> plataformas = List.of(createPlataformaEntity());
 
         when(juegoRepository.findById(ID)).thenReturn(Optional.of(entity));
         when(estudioRepository.findById(req.estudioId())).thenReturn(Optional.of(estudio));

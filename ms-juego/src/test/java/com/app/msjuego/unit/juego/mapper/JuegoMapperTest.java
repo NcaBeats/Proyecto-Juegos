@@ -1,4 +1,4 @@
-package com.app.msjuego.unit.mapper;
+package com.app.msjuego.unit.juego.mapper;
 
 import com.app.msjuego.juego.mapper.JuegoMapper;
 import com.app.msjuego.juego.mapper.JuegoMapperImpl;
@@ -7,7 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static com.app.msjuego.support.EstudioFactory.createEstudioEntity;
+import static com.app.msjuego.support.GeneroFactory.createGeneroEntity;
 import static com.app.msjuego.support.JuegoFactory.*;
+import static com.app.msjuego.support.PlataformaFactory.createPlataformaEntity;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class JuegoMapperTest {
@@ -16,7 +19,7 @@ public class JuegoMapperTest {
 
     @Test
     void toEntity_ValidRequest_ReturnEntity() {
-        var result = juegoMapper.toEntity(JUEGO_REQUEST, createEstudio(), List.of(createGenero(GENERO_ID)), List.of(createPlataforma(PLATAFORMA_ID)));
+        var result = juegoMapper.toEntity(JUEGO_REQUEST, createEstudioEntity(), List.of(createGeneroEntity()), List.of(createPlataformaEntity()));
         assertNotNull(result);
         assertEquals(JUEGO_REQUEST.nombre(), result.getNombre());
         assertEquals(JUEGO_REQUEST.descripcion(), result.getDescripcion());

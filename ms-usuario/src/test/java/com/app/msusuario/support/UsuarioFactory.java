@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.util.Locale;
 
 public class UsuarioFactory {
-    private static final Faker faker = new Faker(Locale.of("es"));
+    private static final Faker FAKER = new Faker(Locale.of("es"));
     public static final Long ID = 1L;
     public static final String NOMBRE = "User";
     public static final String EMAIL = "user@test.com";
@@ -26,6 +26,8 @@ public class UsuarioFactory {
                 .saldo(SALDO)
                 .build();
     }
+
+    // Entidad Mutable Para Monto Inválido
     public static Usuario createUsuarioEntityInvalidAmount(){
         return Usuario.builder()
                 .id(ID)
@@ -34,13 +36,14 @@ public class UsuarioFactory {
                 .saldo(BigDecimal.valueOf(50.00))
                 .build();
     }
+
     // Entidad con datos faker
     public static Usuario createUsuarioEntityFaker() {
         return Usuario.builder()
-                .id(faker.number().randomNumber())
-                .nombre(faker.name().firstName())
-                .email(faker.internet().emailAddress())
-                .saldo(BigDecimal.valueOf(faker.number().randomDouble(2, 10, 500)))
+                .id(FAKER.number().randomNumber())
+                .nombre(FAKER.name().firstName())
+                .email(FAKER.internet().emailAddress())
+                .saldo(BigDecimal.valueOf(FAKER.number().randomDouble(2, 10, 500)))
                 .build();
     }
 
@@ -51,9 +54,9 @@ public class UsuarioFactory {
     // Request con datos faker
     public static UsuarioRequest createUsuarioRequestFaker() {
         return new UsuarioRequest(
-                faker.name().firstName(),
-                faker.internet().emailAddress(),
-                BigDecimal.valueOf(faker.number().randomDouble(2, 10, 500))
+                FAKER.name().firstName(),
+                FAKER.internet().emailAddress(),
+                BigDecimal.valueOf(FAKER.number().randomDouble(2, 10, 500))
         );
     }
 

@@ -1,4 +1,4 @@
-package com.app.msjuego.unit.controller;
+package com.app.msjuego.unit.juego.controller;
 
 import com.app.msjuego.juego.controller.JuegoController;
 import com.app.msjuego.juego.service.JuegoService;

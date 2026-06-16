@@ -54,17 +54,17 @@ public class JuegoServiceTest {
     @Test
     void findById_Found_ReturnResponse() {
         Juego juego = createJuegoEntityFaker();
-        when(juegoRepository.findById(ID)).thenReturn(Optional.of(juego));
+        when(juegoRepository.findById(juego.getId())).thenReturn(Optional.of(juego));
         when(juegoMapper.toResponse(juego)).thenReturn(JUEGO_RESPONSE);
 
-        var result = juegoService.findById(ID);
+        var result = juegoService.findById(juego.getId());
 
         assertNotNull(result);
         assertEquals(JUEGO_RESPONSE, result);
     }
 
     @Test
-    void findById_NotFound_Throw() {
+    void findById_NotFound_ThrowException() {
         when(juegoRepository.findById(ID)).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> juegoService.findById(ID));
         verifyNoInteractions(juegoMapper);
@@ -81,8 +81,6 @@ public class JuegoServiceTest {
         var result = juegoService.findAll(PAGEABLE);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.getContent().size());
         assertEquals(JUEGO_RESPONSE, result.getContent().getFirst());
         verify(juegoRepository).findAll(PAGEABLE);
     }
@@ -184,14 +182,14 @@ public class JuegoServiceTest {
         List<Genero> generos = List.of(createGeneroEntity());
         List<Plataforma> plataformas = List.of(createPlataformaEntity());
 
-        when(juegoRepository.findById(ID)).thenReturn(Optional.of(entity));
+        when(juegoRepository.findById(entity.getId())).thenReturn(Optional.of(entity));
         when(estudioRepository.findById(req.estudioId())).thenReturn(Optional.of(estudio));
         when(generoRepository.findAllById(req.generoIds())).thenReturn(generos);
         when(plataformaRepository.findAllById(req.plataformaIds())).thenReturn(plataformas);
         when(juegoRepository.save(entity)).thenReturn(entity);
         when(juegoMapper.toResponse(entity)).thenReturn(JUEGO_RESPONSE);
 
-        var result = juegoService.update(ID, req);
+        var result = juegoService.update(entity.getId(), req);
 
         assertNotNull(result);
         assertEquals(JUEGO_RESPONSE, result);

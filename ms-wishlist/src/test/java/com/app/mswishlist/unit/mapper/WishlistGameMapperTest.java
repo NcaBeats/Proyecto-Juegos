@@ -17,7 +17,7 @@ public class WishlistGameMapperTest {
 
     @Test
     void toEntity_and_toResponse() {
-        WishlistGame entity = wishlistGameMapper.toEntity(createWishlistGameRequest(), createWishlist());
+        WishlistGame entity = wishlistGameMapper.toEntity(createWishlistGameRequest(), createWishlistEntity());
         assertNotNull(entity);
         assertEquals(GAME_ID, entity.getGameId());
     }

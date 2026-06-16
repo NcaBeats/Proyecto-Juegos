@@ -1,5 +1,6 @@
 package com.app.msusuario.unit.service;
 
+import com.app.msusuario.dto.UsuarioRequest;
 import com.app.msusuario.mapper.UsuarioMapper;
 import com.app.msusuario.model.Usuario;
 import com.app.msusuario.repository.UsuarioRepository;
@@ -37,14 +38,14 @@ public class UsuarioServiceTest {
     UsuarioService usuarioService;
 
     @Test
-    void findAll() {
-
-        List<Usuario> listaUsuarios = List.of(USER_ENTITY);
+    void findAll_ReturnPage() {
+        Usuario usuario = createUsuarioEntityFaker();
+        List<Usuario> listaUsuarios = List.of(usuario);
 
         Page<Usuario> paginaUsuarios = new PageImpl<>(listaUsuarios,PAGEABLE,listaUsuarios.size());
 
         when(usuarioRepository.findAll(PAGEABLE)).thenReturn(paginaUsuarios);
-        when(usuarioMapper.toResponse(USER_ENTITY)).thenReturn(USER_RESPONSE);
+        when(usuarioMapper.toResponse(usuario)).thenReturn(USER_RESPONSE);
 
 
         var result = usuarioService.findAll(PAGEABLE);
@@ -53,36 +54,35 @@ public class UsuarioServiceTest {
         assertFalse(result.isEmpty());
         assertEquals(1,result.getContent().size());
         assertEquals(USER_RESPONSE,result.getContent().getFirst());
-        verify(usuarioMapper).toResponse(USER_ENTITY);
+        verify(usuarioMapper).toResponse(usuario);
 
     }
     @Test
     void findById_UserFound_ReturnUserResponse (){
+        Usuario usuario = createUsuarioEntityFaker();
+        when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
+        when(usuarioMapper.toResponse(usuario)).thenReturn(USER_RESPONSE);
 
-        when(usuarioRepository.findById(USER_RESPONSE.id())).thenReturn(Optional.of(USER_ENTITY));
-        when(usuarioMapper.toResponse(USER_ENTITY)).thenReturn(USER_RESPONSE);
-
-        var result = usuarioService.findById(USER_RESPONSE.id());
+        var result = usuarioService.findById(usuario.getId());
 
         assertNotNull(result);
         assertEquals(USER_RESPONSE,result);
-
     }
     @Test
     void findById_UserNotFound_ReturnException () {
 
-        when(usuarioRepository.findById(USER_RESPONSE.id())).thenReturn(Optional.empty());
+        when(usuarioRepository.findById(ID)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class,()-> usuarioService.findById(USER_RESPONSE.id()));
-        verifyNoInteractions(usuarioMapper); // Verifica que no se haya utilizado el Mapper
+        assertThrows(EntityNotFoundException.class,()-> usuarioService.findById(ID));
+        verifyNoInteractions(usuarioMapper);
     }
     @Test
     void findByEmail_UserFound_ReturnUserResponse () {
+        Usuario usuario = createUsuarioEntityFaker();
+        when(usuarioRepository.findByEmail(usuario.getEmail())).thenReturn(Optional.of(usuario));
+        when(usuarioMapper.toResponse(usuario)).thenReturn(USER_RESPONSE);
 
-        when(usuarioRepository.findByEmail(USER_RESPONSE.email())).thenReturn(Optional.of(USER_ENTITY));
-        when(usuarioMapper.toResponse(USER_ENTITY)).thenReturn(USER_RESPONSE);
-
-        var result = usuarioService.findByEmail(USER_RESPONSE.email());
+        var result = usuarioService.findByEmail(usuario.getEmail());
 
         assertNotNull(result);
         assertEquals(USER_RESPONSE,result);
@@ -90,17 +90,17 @@ public class UsuarioServiceTest {
     }
     @Test
     void findByEmail_UserNotFound_ReturnException () {
-        when(usuarioRepository.findByEmail(USER_RESPONSE.email())).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class,()-> usuarioService.findByEmail(USER_RESPONSE.email()));
+        when(usuarioRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class,()-> usuarioService.findByEmail(EMAIL));
         verifyNoInteractions(usuarioMapper);
     }
     @Test
     void findByNombre_UserFound_ReturnUserResponse () {
+        Usuario usuario = createUsuarioEntityFaker();
+        when(usuarioRepository.findByNombre(usuario.getNombre())).thenReturn(Optional.of(usuario));
+        when(usuarioMapper.toResponse(usuario)).thenReturn(USER_RESPONSE);
 
-        when(usuarioRepository.findByNombre(USER_RESPONSE.nombre())).thenReturn(Optional.of(USER_ENTITY));
-        when(usuarioMapper.toResponse(USER_ENTITY)).thenReturn(USER_RESPONSE);
-
-        var result = usuarioService.findByNombre(USER_RESPONSE.nombre());
+        var result = usuarioService.findByNombre(usuario.getNombre());
 
         assertNotNull(result);
         assertEquals(USER_RESPONSE,result);
@@ -108,60 +108,69 @@ public class UsuarioServiceTest {
     }
     @Test
     void findByNombre_UserNotFound_ReturnException () {
-        when(usuarioRepository.findByNombre(USER_RESPONSE.nombre())).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class,()-> usuarioService.findByNombre(USER_RESPONSE.nombre()));
+        when(usuarioRepository.findByNombre(NOMBRE)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class,()-> usuarioService.findByNombre(NOMBRE));
         verifyNoInteractions(usuarioMapper);
     }
     @Test
     void save_UserSaved_ReturnUserResponse () {
-        when(usuarioMapper.toEntity(USER_REQUEST)).thenReturn(USER_ENTITY);
-        when(usuarioRepository.save(USER_ENTITY)).thenReturn(USER_ENTITY);
-        when(usuarioMapper.toResponse(USER_ENTITY)).thenReturn(USER_RESPONSE);
+        UsuarioRequest userRequest = createUsuarioRequestFaker();
+        Usuario usuario = createUsuarioEntityFaker();
+        when(usuarioMapper.toEntity(userRequest)).thenReturn(usuario);
+        when(usuarioRepository.save(usuario)).thenReturn(usuario);
+        when(usuarioMapper.toResponse(usuario)).thenReturn(USER_RESPONSE);
 
-        var result = usuarioService.save(USER_REQUEST);
+        var result = usuarioService.save(userRequest);
 
         assertNotNull(result);
         assertEquals(USER_RESPONSE,result);
-        verify(usuarioMapper).toEntity(USER_REQUEST);
-        verify(usuarioRepository).save(USER_ENTITY);
-        verify(usuarioMapper).toResponse(USER_ENTITY);
+        verify(usuarioMapper).toEntity(userRequest);
+        verify(usuarioRepository).save(usuario);
+        verify(usuarioMapper).toResponse(usuario);
     }
     @Test
     void save_NombreDuplicated_ReturnException () {
-        when(usuarioMapper.toEntity(USER_REQUEST)).thenReturn(USER_ENTITY);
-        when(usuarioRepository.save(USER_ENTITY)).thenThrow(new DataIntegrityViolationException("Nombre duplicado"));
-        assertThrows(DataIntegrityViolationException.class,()-> usuarioService.save(USER_REQUEST));
+        UsuarioRequest userRequest = createUsuarioRequestFaker();
+        Usuario usuario = createUsuarioEntityFaker();
+        when(usuarioMapper.toEntity(userRequest)).thenReturn(usuario);
+        when(usuarioRepository.save(usuario)).thenThrow(new DataIntegrityViolationException("Nombre duplicado"));
+        assertThrows(DataIntegrityViolationException.class,()-> usuarioService.save(userRequest));
     }
     @Test
     void save_EmailDuplicated_ReturnException () {
-        when(usuarioMapper.toEntity(USER_REQUEST)).thenReturn(USER_ENTITY);
-        when(usuarioRepository.save(USER_ENTITY)).thenThrow(new DataIntegrityViolationException("Email duplicado"));
-        assertThrows(DataIntegrityViolationException.class,()-> usuarioService.save(USER_REQUEST));
+        UsuarioRequest userRequest = createUsuarioRequestFaker();
+        Usuario usuario = createUsuarioEntityFaker();
+        when(usuarioMapper.toEntity(userRequest)).thenReturn(usuario);
+        when(usuarioRepository.save(usuario)).thenThrow(new DataIntegrityViolationException("Email duplicado"));
+        assertThrows(DataIntegrityViolationException.class,()-> usuarioService.save(userRequest));
     }
     @Test
     void update_UserUpdated_ReturnUserResponse () {
         Usuario usuario = createUsuarioEntity();
         Usuario usuarioSpy = spy(usuario);
-        when(usuarioRepository.findById(USER_RESPONSE.id())).thenReturn(Optional.of(usuarioSpy));
+        UsuarioRequest userRequest = createUsuarioRequestFaker();
+        when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.of(usuarioSpy));
         when(usuarioMapper.toResponse(usuarioSpy)).thenReturn(USER_RESPONSE);
 
-        var result = usuarioService.update(USER_RESPONSE.id(),USER_REQUEST);
+        var result = usuarioService.update(usuario.getId(),userRequest);
 
         assertNotNull(result);
         assertEquals(USER_RESPONSE,result);
-        verify(usuarioSpy).update(USER_REQUEST);
+        verify(usuarioSpy).update(userRequest);
     }
     @Test
     void update_UserNotFound_ReturnException () {
-        when(usuarioRepository.findById(USER_RESPONSE.id())).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class,()-> usuarioService.update(USER_RESPONSE.id(),USER_REQUEST));
+        UsuarioRequest userRequest = createUsuarioRequestFaker();
+        when(usuarioRepository.findById(ID)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class,()-> usuarioService.update(ID,userRequest));
         verifyNoInteractions(usuarioMapper);
     }
     @Test
     void delete_UserDeleted_ReturnUserResponse () {
-        when(usuarioRepository.findById(USER_RESPONSE.id())).thenReturn(Optional.of(USER_ENTITY));
-        usuarioService.delete(USER_RESPONSE.id());
-        verify(usuarioRepository).delete(USER_ENTITY);
+        Usuario usuario = createUsuarioEntityFaker();
+        when(usuarioRepository.findById(ID)).thenReturn(Optional.of(usuario));
+        usuarioService.delete(ID);
+        verify(usuarioRepository).delete(usuario);
     }
     @Test
     void delete_UserNotFound_ReturnException() {
@@ -172,7 +181,7 @@ public class UsuarioServiceTest {
     }
     @Test
     void subtractBalance_ValidAmount_BalanceDecremented() {
-        Usuario usuario = createUsuarioEntity(ID, NOMBRE, EMAIL, SALDO);
+        Usuario usuario = createUsuarioEntity();
 
         when(usuarioRepository.findById(ID)).thenReturn(Optional.of(usuario));
 
@@ -189,11 +198,11 @@ public class UsuarioServiceTest {
     }
     @Test
     void subtractBalance_InvalidAmount_ReturnException() {
-        Usuario usuario = createUsuarioEntity(ID, NOMBRE, EMAIL, BigDecimal.valueOf(50));
+        Usuario usuario = createUsuarioEntityInvalidAmount();
 
         when(usuarioRepository.findById(ID)).thenReturn(Optional.of(usuario));
 
-        assertThrows(RuntimeException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> usuarioService.restarSaldo(ID, BigDecimal.valueOf(100)));
     }
 }

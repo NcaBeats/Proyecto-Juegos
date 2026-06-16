@@ -87,7 +87,7 @@ public class UsuarioService {
             // si es igual devuelve 0,
             // si es menor devuelve -1
             // se usa compareTo porque BigDecimal es un Objeto
-            throw new RuntimeException("saldo insuficiente");
+            throw new IllegalArgumentException("saldo insuficiente");
         }
         user.setSaldo(user.getSaldo().subtract(monto));
         log.info("Saldo actualizado userId={}", userId);

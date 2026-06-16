@@ -41,25 +41,28 @@ public class ProfileServiceTest {
 
     @Test
     void findAll_ReturnsPage() {
-        List<Profile> list = List.of(PROFILE_ENTITY);
+        Profile profile = createProfileEntityFaker();
+        List<Profile> list = List.of(profile);
         Page<Profile> page = new PageImpl<>(list, PAGEABLE, list.size());
         when(profileRepository.findAll(PAGEABLE)).thenReturn(page);
-        when(userClient.findById(PROFILE_ENTITY.getUserId())).thenReturn(USER_RESPONSE);
-        when(profileMapper.toResponse(PROFILE_ENTITY, USER_RESPONSE)).thenReturn(PROFILE_RESPONSE);
+        when(userClient.findById(profile.getUserId())).thenReturn(USER_RESPONSE);
+        when(profileMapper.toResponse(profile, USER_RESPONSE)).thenReturn(PROFILE_RESPONSE);
 
         var result = profileService.findAll(PAGEABLE);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
+        assertEquals(1,result.getContent().size());
+        assertEquals(PROFILE_RESPONSE,result.getContent().getFirst());
     }
 
     @Test
     void findById_Found_ReturnResponse() {
-        when(profileRepository.findById(USER_ID)).thenReturn(Optional.of(PROFILE_ENTITY));
-        when(userClient.findById(USER_ID)).thenReturn(USER_RESPONSE);
-        when(profileMapper.toResponse(PROFILE_ENTITY, USER_RESPONSE)).thenReturn(PROFILE_RESPONSE);
+        Profile profile = createProfileEntityFaker();
+        when(profileRepository.findById(profile.getUserId())).thenReturn(Optional.of(profile));
+        when(userClient.findById(profile.getUserId())).thenReturn(USER_RESPONSE);
+        when(profileMapper.toResponse(profile, USER_RESPONSE)).thenReturn(PROFILE_RESPONSE);
 
-        var result = profileService.findById(USER_ID);
+        var result = profileService.findById(profile.getUserId());
 
         assertNotNull(result);
         assertEquals(PROFILE_RESPONSE, result);
@@ -74,11 +77,12 @@ public class ProfileServiceTest {
     @Test
     void save_Success_ReturnResponse() {
         ProfileRequest req = PROFILE_REQUEST;
+        Profile profile = createProfileEntity();
         when(profileRepository.existsByUserId(req.userId())).thenReturn(false);
         when(userClient.findById(req.userId())).thenReturn(USER_RESPONSE);
-        when(profileMapper.toEntity(req)).thenReturn(PROFILE_ENTITY);
-        when(profileRepository.save(PROFILE_ENTITY)).thenReturn(PROFILE_ENTITY);
-        when(profileMapper.toResponse(PROFILE_ENTITY, USER_RESPONSE)).thenReturn(PROFILE_RESPONSE);
+        when(profileMapper.toEntity(req)).thenReturn(profile);
+        when(profileRepository.save(profile)).thenReturn(profile);
+        when(profileMapper.toResponse(profile, USER_RESPONSE)).thenReturn(PROFILE_RESPONSE);
 
         var result = profileService.save(req);
 
@@ -95,9 +99,10 @@ public class ProfileServiceTest {
     @Test
     void update_Success_ReturnResponse() {
         ProfileRequest req = PROFILE_REQUEST;
-        when(profileRepository.findByUserId(req.userId())).thenReturn(Optional.of(PROFILE_ENTITY));
+        Profile profile = createProfileEntity();
+        when(profileRepository.findByUserId(req.userId())).thenReturn(Optional.of(profile));
         when(userClient.findById(req.userId())).thenReturn(USER_RESPONSE);
-        when(profileMapper.toResponse(PROFILE_ENTITY, USER_RESPONSE)).thenReturn(PROFILE_RESPONSE);
+        when(profileMapper.toResponse(profile, USER_RESPONSE)).thenReturn(PROFILE_RESPONSE);
 
         var result = profileService.update(req);
 
@@ -113,12 +118,13 @@ public class ProfileServiceTest {
 
     @Test
     void delete_Success() {
-        when(profileRepository.findByUserId(USER_ID)).thenReturn(Optional.of(PROFILE_ENTITY));
-        doNothing().when(profileRepository).delete(PROFILE_ENTITY);
+        Profile profile = createProfileEntityFaker();
+        when(profileRepository.findByUserId(profile.getUserId())).thenReturn(Optional.of(profile));
+        doNothing().when(profileRepository).delete(profile);
 
-        profileService.delete(USER_ID);
+        profileService.delete(profile.getUserId());
 
-        verify(profileRepository).delete(PROFILE_ENTITY);
+        verify(profileRepository).delete(profile);
     }
 
     @Test

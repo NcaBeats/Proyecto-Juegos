@@ -81,7 +81,6 @@ public class JuegoServiceTest {
         var result = juegoService.findAll(PAGEABLE);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
         assertEquals(1, result.getContent().size());
         assertEquals(JUEGO_RESPONSE, result.getContent().getFirst());
         verify(juegoRepository).findAll(PAGEABLE);

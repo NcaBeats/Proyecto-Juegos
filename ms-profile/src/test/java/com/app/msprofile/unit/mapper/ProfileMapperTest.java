@@ -25,7 +25,7 @@ public class ProfileMapperTest {
 
     @Test
     void toResponse_ValidEntity_ReturnResponse() {
-        Profile entity = PROFILE_ENTITY;
+        Profile entity = createProfileEntity();
         var result = profileMapper.toResponse(entity, USER_RESPONSE);
         assertNotNull(result);
         assertEquals(entity.getUserId(), result.userId());

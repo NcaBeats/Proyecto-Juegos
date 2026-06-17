@@ -1,6 +1,5 @@
 package com.app.msjuego.unit.juego.mapper;
 
-import com.app.msjuego.juego.mapper.JuegoMapper;
 import com.app.msjuego.juego.mapper.JuegoMapperImpl;
 import com.app.msjuego.juego.model.Juego;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JuegoMapperTest {
 
     @InjectMocks
-    JuegoMapper juegoMapper;
+    JuegoMapperImpl juegoMapper;
 
     @Test
     void toEntity_ValidRequest_ReturnEntity() {

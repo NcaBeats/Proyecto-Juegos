@@ -3,6 +3,11 @@ package com.app.msjuego.genero.controller;
 import com.app.msjuego.genero.dto.GeneroRequest;
 import com.app.msjuego.genero.dto.GeneroResponse;
 import com.app.msjuego.genero.service.GeneroService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,36 +21,77 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("api/v1/generos")
+@Tag(
+        name = "Géneros",
+        description = "Gestión de géneros de videojuegos de la plataforma Nico's Games"
+)
 public class GeneroController {
+
     private final GeneroService generoService;
 
+    @Operation(summary = "Obtener un género por ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Género encontrado"),
+            @ApiResponse(responseCode = "404", description = "Género no encontrado")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<GeneroResponse> findById(@Valid @PathVariable Long id) {
+    public ResponseEntity<GeneroResponse> findById(
+            @Parameter(description = "ID del género")
+            @Valid @PathVariable Long id) {
+
         log.debug("GET /api/v1/generos/{}", id);
         return ResponseEntity.ok(generoService.findById(id));
     }
 
+    @Operation(summary = "Obtener todos los géneros")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
+    })
     @GetMapping
     public ResponseEntity<Page<GeneroResponse>> findAll(Pageable pageable) {
+
         log.debug("GET /api/v1/generos - página: {} tamaño: {}", pageable.getPageNumber(), pageable.getPageSize());
         return ResponseEntity.ok(generoService.findAll(pageable));
     }
 
+    @Operation(summary = "Crear un nuevo género")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Género creado correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+    })
     @PostMapping
     public ResponseEntity<GeneroResponse> save(@Valid @RequestBody GeneroRequest request) {
-        log.info("POST /api/v1/generos - creando genero");
+
+        log.info("POST /api/v1/generos - creando género");
         return ResponseEntity.status(HttpStatus.CREATED).body(generoService.save(request));
     }
 
+    @Operation(summary = "Actualizar un género")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Género actualizado correctamente"),
+            @ApiResponse(responseCode = "404", description = "Género no encontrado")
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<GeneroResponse> update(@PathVariable Long id, @Valid @RequestBody GeneroRequest request) {
-        log.info("PUT /api/v1/generos/{} - actualizando genero", id);
+    public ResponseEntity<GeneroResponse> update(
+            @Parameter(description = "ID del género")
+            @PathVariable Long id,
+            @Valid @RequestBody GeneroRequest request) {
+
+        log.info("PUT /api/v1/generos/{} - actualizando género", id);
         return ResponseEntity.ok(generoService.update(id, request));
     }
 
+    @Operation(summary = "Eliminar un género")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Género eliminado correctamente"),
+            @ApiResponse(responseCode = "404", description = "Género no encontrado")
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        log.info("DELETE /api/v1/generos/{} - eliminando genero", id);
+    public ResponseEntity<Void> delete(
+            @Parameter(description = "ID del género")
+            @PathVariable Long id) {
+
+        log.info("DELETE /api/v1/generos/{} - eliminando género", id);
         generoService.delete(id);
         return ResponseEntity.noContent().build();
     }

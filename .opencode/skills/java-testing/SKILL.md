@@ -40,6 +40,8 @@ Rules:
 - Sin hardcoded literales en responses (usar `.getValue()`, referencias a enum, etc.).
 - DTOs externos (`JuegoResponse`, `ProfileResponse`, `UserResponse`) van en el factory.
 - **Nunca** crear constantes `*2` / `*3` para variaciones (`GAME_ID2`, `JUEGO_RESPONSE2`). Usar faker o inline en el test cuando se necesiten valores adicionales.
+- Entidades (Lombok `@Getter @Setter`, mutables) → factory method (`createEntidadEntity()`), nunca `static final`.
+- Request/Response (record, inmutables) → `static final` es seguro.
 
 ## Test (`src/test/java/.../unit/<domain>/service/<Entidad>ServiceTest.java`)
 

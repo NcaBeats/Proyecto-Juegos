@@ -31,7 +31,7 @@ public class UsuarioControllerTest {
     private UsuarioController usuarioController;
 
     @Test
-    void findAll() {
+    void findAll_ReturnsOk() {
         when(usuarioService.findAll(PAGEABLE)).thenReturn(Page.empty());
 
         var result = usuarioController.findAll(PAGEABLE);

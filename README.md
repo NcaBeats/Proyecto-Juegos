@@ -136,6 +136,43 @@ Si un microservicio se inicia antes que Eureka, reintentará conectarse automát
 
 ---
 
+## Swagger / OpenAPI
+
+Cada microservicio tiene Swagger integrado vía **springdoc-openapi** para explorar y probar sus endpoints desde el navegador.
+
+### Acceder a Swagger centralizado (recomendado)
+
+El **ms-gateway** tiene Swagger UI integrado y configurado para mostrar todos los microservicios en una sola interfaz:
+
+```
+http://localhost:8090/swagger-ui.html
+```
+
+Un dropdown en la esquina superior derecha te permite seleccionar entre los 10 microservicios para explorar sus endpoints individuales. Todas las peticiones se hacen a través del gateway.
+
+### Acceso directo (alternativa)
+
+Cada microservicio también expone Swagger en su propio puerto, pero el "Try it out" solo funcionará si usas el gateway (el spec apunta a `localhost:8090`).
+
+```
+http://localhost:{puerto}/swagger-ui.html
+```
+
+| Microservicio | Puerto | Swagger UI |
+|--------------|--------|------------|
+| ms-juego | 8080 | http://localhost:8080/swagger-ui.html |
+| ms-usuario | 8081 | http://localhost:8081/swagger-ui.html |
+| ms-profile | 8082 | http://localhost:8082/swagger-ui.html |
+| ms-purchase | 8083 | http://localhost:8083/swagger-ui.html |
+| ms-review | 8084 | http://localhost:8084/swagger-ui.html |
+| ms-wishlist | 8085 | http://localhost:8085/swagger-ui.html |
+| ms-notification | 8086 | http://localhost:8086/swagger-ui.html |
+| ms-stats | 8087 | http://localhost:8087/swagger-ui.html |
+| ms-library | 8088 | http://localhost:8088/swagger-ui.html |
+| ms-friendship | 8089 | http://localhost:8089/swagger-ui.html |
+
+---
+
 ## Pre-requisitos
 
 - **Java**: JDK 25 (Temurin)  
@@ -156,6 +193,8 @@ Si un microservicio se inicia antes que Eureka, reintentará conectarse automát
 - **Comunicación**: REST + Feign Client  
   ![REST API](https://img.shields.io/badge/REST-API-orange?logo=fastapi)
   ![Feign Client](https://img.shields.io/badge/Feign_Client-HTTP%20Client-purple)
+- **Documentación API**: Swagger (springdoc-openapi)  
+  ![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-green?logo=swagger)
 - **Service Discovery**: Eureka  
   ![Eureka](https://img.shields.io/badge/Eureka-Service%20Discovery-blue?logo=spring&color=blue)
 - **API Gateway**: Spring Cloud Gateway  

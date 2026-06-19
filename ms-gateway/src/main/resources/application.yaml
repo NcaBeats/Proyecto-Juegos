@@ -58,3 +58,97 @@ spring:
               uri: http://localhost:8080
               predicates:
                 - Path=/api/v1/juegos/**,/api/v1/generos/**,/api/v1/plataformas/**,/api/v1/estudios/**
+
+            - id: api-docs-juego
+              uri: http://localhost:8080
+              predicates:
+                - Path=/api-docs/juego
+              filters:
+                - RewritePath=/api-docs/juego, /v3/api-docs
+
+            - id: api-docs-usuario
+              uri: http://localhost:8081
+              predicates:
+                - Path=/api-docs/usuario
+              filters:
+                - RewritePath=/api-docs/usuario, /v3/api-docs
+
+            - id: api-docs-profile
+              uri: http://localhost:8082
+              predicates:
+                - Path=/api-docs/profile
+              filters:
+                - RewritePath=/api-docs/profile, /v3/api-docs
+
+            - id: api-docs-purchase
+              uri: http://localhost:8083
+              predicates:
+                - Path=/api-docs/purchase
+              filters:
+                - RewritePath=/api-docs/purchase, /v3/api-docs
+
+            - id: api-docs-review
+              uri: http://localhost:8084
+              predicates:
+                - Path=/api-docs/review
+              filters:
+                - RewritePath=/api-docs/review, /v3/api-docs
+
+            - id: api-docs-wishlist
+              uri: http://localhost:8085
+              predicates:
+                - Path=/api-docs/wishlist
+              filters:
+                - RewritePath=/api-docs/wishlist, /v3/api-docs
+
+            - id: api-docs-notification
+              uri: http://localhost:8086
+              predicates:
+                - Path=/api-docs/notification
+              filters:
+                - RewritePath=/api-docs/notification, /v3/api-docs
+
+            - id: api-docs-stats
+              uri: http://localhost:8087
+              predicates:
+                - Path=/api-docs/stats
+              filters:
+                - RewritePath=/api-docs/stats, /v3/api-docs
+
+            - id: api-docs-library
+              uri: http://localhost:8088
+              predicates:
+                - Path=/api-docs/library
+              filters:
+                - RewritePath=/api-docs/library, /v3/api-docs
+
+            - id: api-docs-friendship
+              uri: http://localhost:8089
+              predicates:
+                - Path=/api-docs/friendship
+              filters:
+                - RewritePath=/api-docs/friendship, /v3/api-docs
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: ms-juego
+        url: /api-docs/juego
+      - name: ms-usuario
+        url: /api-docs/usuario
+      - name: ms-profile
+        url: /api-docs/profile
+      - name: ms-purchase
+        url: /api-docs/purchase
+      - name: ms-review
+        url: /api-docs/review
+      - name: ms-wishlist
+        url: /api-docs/wishlist
+      - name: ms-notification
+        url: /api-docs/notification
+      - name: ms-stats
+        url: /api-docs/stats
+      - name: ms-library
+        url: /api-docs/library
+      - name: ms-friendship
+        url: /api-docs/friendship

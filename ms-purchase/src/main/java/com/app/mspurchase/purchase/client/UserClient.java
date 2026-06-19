@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 
-@FeignClient(name = "ms-user-purchase", url = "http://localhost:8081/api/v1/usuarios")
+@FeignClient(name = "ms-usuario")
 public interface UserClient {
-    @GetMapping("/{id}")
+    @GetMapping("/api/v1/usuarios/{id}")
     UserResponse getUserById(@PathVariable Long id);
 
-    @PutMapping("/{id}/balance")
+    @PutMapping("/api/v1/usuarios/{id}/balance")
     void updateBalance(@PathVariable Long id,
                        @RequestParam BigDecimal monto);
 }

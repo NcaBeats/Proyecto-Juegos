@@ -4,8 +4,8 @@ import com.app.msreview.dto.external.NotificationRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@FeignClient(name = "notification-client", url = "http://localhost:8086/api/v1/notifications")
+@FeignClient(name = "ms-notification")
 public interface NotificationClient {
-    @PostMapping
+    @PostMapping("/api/v1/notifications")
     void createNotification(NotificationRequest request);
 }

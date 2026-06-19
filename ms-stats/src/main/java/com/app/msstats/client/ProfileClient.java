@@ -5,8 +5,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "profile-service-stats", url = "http://localhost:8082/api/v1/profiles")
+@FeignClient(name = "ms-profile")
 public interface ProfileClient {
-    @GetMapping("/{userId}")
+    @GetMapping("/api/v1/profiles/{userId}")
     ProfileResponse getProfileByUserId(@PathVariable Long userId);
 }

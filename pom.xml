@@ -34,11 +34,19 @@
     <module>ms-library</module>
     <module>common</module>
     <module>ms-eureka</module>
+    <module>ms-gateway</module>
   </modules>
 
 
 <dependencyManagement>
   <dependencies>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-dependencies</artifactId>
+      <version>2025.1.2</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>

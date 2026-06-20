@@ -24,7 +24,7 @@ public class ProfileService {
     private final ProfileMapper profileMapper;
     private final UserClient userClient;
 
- // Posible problema de n+1 query, pero se dejará por simplicidad del proyecto
+    
     public Page<ProfileResponse> findAll (Pageable pageable) {
         log.debug("Obteniendo perfiles - página: {} tamaño: {}", pageable.getPageNumber(), pageable.getPageSize());
         return profileRepository.findAll(pageable).map(profile -> {

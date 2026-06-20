@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@FeignClient(name = "purchase-game-client-stats", url = "http://localhost:8083/api/v1/purchases")
+@FeignClient(name = "ms-purchase")
 public interface PurchaseGameClient {
 
-    @GetMapping("/game/{gameId}/stats")
+    @GetMapping("/api/v1/purchases/game/{gameId}/stats")
     List<PurchaseGameResponse> getAllPurchasesByGameId(@PathVariable Long gameId);
 
-    @GetMapping("/user/{userId}/stats")
+    @GetMapping("/api/v1/purchases/user/{userId}/stats")
     List<PurchaseGameResponse> findAllByUserId(@PathVariable Long userId);
 }

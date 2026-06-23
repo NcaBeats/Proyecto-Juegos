@@ -6,28 +6,25 @@ Sistema de gestión de videojuegos basado en una arquitectura de microservicios.
 
 ## Arquitectura
 
-Tienes 10 microservicios, cada uno corriendo en su propio puerto:  
+12 módulos: 10 microservicios de negocio, 1 service registry (Eureka) y 1 API Gateway.  
+
+### Microservicios de negocio
 
 - ms-juego (8080): Maneja el catálogo de juegos, estudios, géneros y plataformas. Es el núcleo donde están todos los juegos disponibles.  
----
 - ms-usuario (8081): Gestiona los usuarios y su saldo.  
----
 - ms-profile (8082): Perfiles de usuario, nickname, avatar, bio.  
----
 - ms-wishlist (8085): Lista de deseos de cada usuario.  
----
 - ms-review (8084): Sistema de reseñas y ratings.  
----
 - ms-purchase (8083): Procesa las compras.  
----
 - ms-notification (8086): Envía notificaciones al usuario cuando ocurre algo (compra, reseña, wishlist).  
----
-- **ms-library (8088): La biblioteca personal de cada usuario, los juegos que ha comprado.  
----
+- ms-library (8088): La biblioteca personal de cada usuario, los juegos que ha comprado.  
 - ms-friendship (8089): Sistema de amigos y solicitudes de amistad.  
----
 - ms-stats (8087): Un servicio especial sin base de datos que consulta a los demás para dar estadísticas globales.    
----
+
+### Infraestructura
+
+- ms-eureka (8761): Service registry. Todos los microservicios se registran aquí al iniciar.
+- ms-gateway (8090): API Gateway. Punto de entrada único para todas las APIs.
 
 ###   Cómo se comunican?
 
@@ -45,9 +42,137 @@ Tienes 10 microservicios, cada uno corriendo en su propio puerto:
 ### La base de datos
   Cada microservicio tiene su propia base de datos PostgreSQL en Docker.  
 
-  Son 9 contenedores (ms-stats no tiene DB porque solo consulta).  
-  
-Cada uno con su propio puerto
+  Son 9 contenedores de base de datos PostgreSQL (ms-stats no tiene DB porque solo consulta).  
+
+---
+
+## Service Discovery (Eureka)
+
+Eureka es el servicio de registro y descubrimiento de microservicios. Cada microservicio se registra automáticamente al iniciar con su nombre y puerto, permitiendo que se comuniquen entre sí sin URLs hardcodeadas.
+
+### Acceder a la interfaz de Eureka
+
+Una vez que **ms-eureka** esté corriendo, abre en tu navegador:
+
+```
+http://localhost:8761
+```
+
+Verás el panel de Eureka con la sección **"Instances currently registered with Eureka"** donde aparecen todos los microservicios activos. Si un microservicio no aparece ahí, no está disponible para los demás.
+
+### Puertos de los microservicios en Eureka
+
+| Microservicio | Application Name | Puerto |
+|--------------|-----------------|--------|
+| ms-eureka | ms-eureka | 8761 |
+| ms-gateway | ms-gateway | 8090 |
+| ms-juego | ms-juego | 8080 |
+| ms-usuario | ms-usuario | 8081 |
+| ms-profile | ms-profile | 8082 |
+| ms-purchase | ms-purchase | 8083 |
+| ms-review | ms-review | 8084 |
+| ms-wishlist | ms-wishlist | 8085 |
+| ms-notification | ms-notification | 8086 |
+| ms-stats | ms-stats | 8087 |
+| ms-library | ms-library | 8088 |
+| ms-friendship | ms-friendship | 8089 |
+
+---
+
+## API Gateway
+
+El **ms-gateway** (puerto `8090`) es el punto de entrada único para todas las APIs. Enrutamiento las peticiones a los microservicios según el path.
+
+### Acceso directo vs Gateway
+
+Cada microservicio expone sus endpoints en **dos puertos distintos**:
+
+| Forma de acceso | Puerto | Ejemplo |
+|----------------|--------|---------|
+| **Directo** (sin gateway) | Puerto original del MS | `http://localhost:8081/api/v1/usuarios` |
+| **A través del Gateway** | `8090` | `http://localhost:8090/api/v1/usuarios` |
+
+> ⚠️ **IMPORTANTE**: Cuando los microservicios se comunican entre sí vía Feign Client, usan **Eureka** (no el gateway). Las rutas del gateway son solo para consumo externo (frontend, Postman, navegador, etc.).
+
+### Rutas del Gateway
+
+| Ruta | Redirige a | Microservicio destino |
+|------|-----------|----------------------|
+| `/api/v1/usuarios/**` | `http://localhost:8081` | ms-usuario |
+| `/api/v1/profiles/**` | `http://localhost:8082` | ms-profile |
+| `/api/v1/purchases/**` | `http://localhost:8083` | ms-purchase |
+| `/api/v1/reviews/**` | `http://localhost:8084` | ms-review |
+| `/api/v1/wishlists/**` | `http://localhost:8085` | ms-wishlist |
+| `/api/v1/notifications/**` | `http://localhost:8086` | ms-notification |
+| `/api/v1/stats/**` | `http://localhost:8087` | ms-stats |
+| `/api/v1/library/**` | `http://localhost:8088` | ms-library |
+| `/api/v1/friendships/**` | `http://localhost:8089` | ms-friendship |
+| `/api/v1/juegos/**` | `http://localhost:8080` | ms-juego |
+| `/api/v1/generos/**` | `http://localhost:8080` | ms-juego |
+| `/api/v1/plataformas/**` | `http://localhost:8080` | ms-juego |
+| `/api/v1/estudios/**` | `http://localhost:8080` | ms-juego |
+
+### Ejemplo de uso
+
+**Sin gateway** (acceso directo al microservicio):
+```
+GET http://localhost:8081/api/v1/usuarios/1
+```
+
+**Con gateway** (a través del puerto 8090):
+```
+GET http://localhost:8090/api/v1/usuarios/1
+```
+
+Ambos devuelven la misma respuesta, pero usando el gateway obtienes una capa de enrutamiento centralizado.
+
+### Orden de inicio recomendado
+
+1. **ms-eureka** (puerto 8761)
+2. **ms-gateway** (puerto 8090)
+3. **Los demás microservicios**
+
+Si un microservicio se inicia antes que Eureka, reintentará conectarse automáticamente.
+
+---
+
+## Swagger / OpenAPI
+
+Cada microservicio tiene Swagger integrado vía **springdoc-openapi** para explorar y probar sus endpoints desde el navegador.
+
+### Acceder a Swagger centralizado (recomendado)
+
+El **ms-gateway** tiene Swagger UI integrado y configurado para mostrar todos los microservicios en una sola interfaz:
+
+```
+http://localhost:8090/swagger-ui.html
+```
+
+Un dropdown en la esquina superior derecha te permite seleccionar entre los 10 microservicios para explorar sus endpoints individuales. Todas las peticiones se hacen a través del gateway.
+
+### Acceso directo (alternativa)
+
+Cada microservicio también expone Swagger en su propio puerto, pero el "Try it out" solo funcionará si usas el gateway (el spec apunta a `localhost:8090`).
+
+```
+http://localhost:{puerto}/swagger-ui.html
+```
+
+| Microservicio | Puerto | Swagger UI |
+|--------------|--------|------------|
+| ms-juego | 8080 | http://localhost:8080/swagger-ui.html |
+| ms-usuario | 8081 | http://localhost:8081/swagger-ui.html |
+| ms-profile | 8082 | http://localhost:8082/swagger-ui.html |
+| ms-purchase | 8083 | http://localhost:8083/swagger-ui.html |
+| ms-review | 8084 | http://localhost:8084/swagger-ui.html |
+| ms-wishlist | 8085 | http://localhost:8085/swagger-ui.html |
+| ms-notification | 8086 | http://localhost:8086/swagger-ui.html |
+| ms-stats | 8087 | http://localhost:8087/swagger-ui.html |
+| ms-library | 8088 | http://localhost:8088/swagger-ui.html |
+| ms-friendship | 8089 | http://localhost:8089/swagger-ui.html |
+
+---
+
 ## Pre-requisitos
 
 - **Java**: JDK 25 (Temurin)  
@@ -61,13 +186,19 @@ Cada uno con su propio puerto
 
 - **Framework**: Spring Boot 4.0.5  
   ![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.5-green?logo=springboot)
-- **Base de datos**: PostgreSQL 17 (10 contenedores)  
+- **Base de datos**: PostgreSQL 17 (9 contenedores)  
   ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue?logo=postgresql)
 - **Migraciones**: Flyway  
   ![Flyway](https://img.shields.io/badge/Flyway-Migrations-red)
 - **Comunicación**: REST + Feign Client  
   ![REST API](https://img.shields.io/badge/REST-API-orange?logo=fastapi)
   ![Feign Client](https://img.shields.io/badge/Feign_Client-HTTP%20Client-purple)
+- **Documentación API**: Swagger (springdoc-openapi)  
+  ![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-green?logo=swagger)
+- **Service Discovery**: Eureka  
+  ![Eureka](https://img.shields.io/badge/Eureka-Service%20Discovery-blue?logo=spring&color=blue)
+- **API Gateway**: Spring Cloud Gateway  
+  ![Gateway](https://img.shields.io/badge/Spring_Cloud_Gateway-API%20Gateway-brightgreen?logo=spring)
 - **Mapeo**: MapStruct    
   ![MapStruct](https://img.shields.io/badge/MapStruct-Mapper-orange)
 - **Build**: Maven  

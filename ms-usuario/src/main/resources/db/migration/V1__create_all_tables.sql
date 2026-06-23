@@ -5,7 +5,8 @@ CREATE TABLE usuario (
     email VARCHAR(100) NOT NULL,
     saldo DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     fecha_creacion TIMESTAMP NOT NULL,
-    CONSTRAINT uk_email UNIQUE (email)
+    CONSTRAINT uk_email UNIQUE (email),
+    CONSTRAINT uk_nombre UNIQUE (nombre)
 );
 
 -- Datos seed

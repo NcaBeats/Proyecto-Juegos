@@ -9,6 +9,7 @@ import com.app.msfriendship.model.FriendshipStatus;
 import com.app.msfriendship.repository.FriendshipRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
 public class FriendshipService {
     private final FriendshipRepository friendshipRepository;
@@ -25,8 +27,10 @@ public class FriendshipService {
     private final UserClient userClient;
 
     public List<FriendshipResponse> getFriends(Long userId) {
+        log.debug("Obteniendo amistades aceptadas para userId={}", userId);
         var amistadesEnviadas = friendshipRepository.findByUserIdAndStatus(userId, FriendshipStatus.ACCEPTED);
         var amistadesRecibidas = friendshipRepository.findByFriendIdAndStatus(userId, FriendshipStatus.ACCEPTED);
+        log.debug("Amistades enviadas: {} - Amistades recibidas: {}", amistadesEnviadas.size(), amistadesRecibidas.size());
 
         return Stream.concat(amistadesEnviadas.stream(), amistadesRecibidas.stream())
                 .map(friendshipMapper::toResponse)
@@ -34,19 +38,22 @@ public class FriendshipService {
     }
 
     public List<FriendshipResponse> getPendingRequests(Long userId) {
-        return friendshipRepository.findByFriendIdAndStatus(userId, FriendshipStatus.PENDING)
-                .stream()
-                .map(friendshipMapper::toResponse)
-                .toList();
+        log.debug("Obteniendo solicitudes pendientes para userId={}", userId);
+        var pending = friendshipRepository.findByFriendIdAndStatus(userId, FriendshipStatus.PENDING);
+        log.debug("Solicitudes pendientes encontradas: {}", pending.size());
+        return pending.stream().map(friendshipMapper::toResponse).toList();
     }
 
     @Transactional
     public FriendshipResponse sendRequest(Long userId, FriendshipRequest request) {
+        log.info("Enviando solicitud de amistad - userId={} friendId={}", userId, request.friendId());
         if (userId.equals(request.friendId())) {
             throw new IllegalArgumentException("No puedes enviarte solicitud a ti mismo");
         }
 
+        log.debug("Llamando a UserClient.getUserById userId={}", userId);
         userClient.getUserById(userId);
+        log.debug("Llamando a UserClient.getUserById userId={}", request.friendId());
         userClient.getUserById(request.friendId());
 
         if (friendshipRepository.existsByUserIdAndFriendId(userId, request.friendId()) ||
@@ -61,11 +68,14 @@ public class FriendshipService {
                 .createdAt(Instant.now())
                 .build();
 
-        return friendshipMapper.toResponse(friendshipRepository.save(friendship));
+        Friendship saved = friendshipRepository.save(friendship);
+        log.info("Solicitud de amistad creada con id={} userId={} friendId={}", saved.getId(), saved.getUserId(), saved.getFriendId());
+        return friendshipMapper.toResponse(saved);
     }
 
     @Transactional
     public FriendshipResponse acceptRequest(Long userId, Long friendshipId) {
+        log.info("Aceptando solicitud de amistad - userId={} friendshipId={}", userId, friendshipId);
         Friendship friendship = friendshipRepository.findById(friendshipId)
                 .orElseThrow(() -> new EntityNotFoundException("Solicitud no encontrada"));
 
@@ -77,11 +87,14 @@ public class FriendshipService {
         }
 
         friendship.setStatus(FriendshipStatus.ACCEPTED);
-        return friendshipMapper.toResponse(friendshipRepository.save(friendship));
+        Friendship saved = friendshipRepository.save(friendship);
+        log.info("Solicitud aceptada - id={} userId={} friendId={}", saved.getId(), saved.getUserId(), saved.getFriendId());
+        return friendshipMapper.toResponse(saved);
     }
 
     @Transactional
     public FriendshipResponse rejectRequest(Long userId, Long friendshipId) {
+        log.info("Rechazando solicitud de amistad - userId={} friendshipId={}", userId, friendshipId);
         Friendship friendship = friendshipRepository.findById(friendshipId)
                 .orElseThrow(() -> new EntityNotFoundException("Solicitud no encontrada"));
 
@@ -93,15 +106,19 @@ public class FriendshipService {
         }
 
         friendship.setStatus(FriendshipStatus.REJECTED);
-        return friendshipMapper.toResponse(friendshipRepository.save(friendship));
+        Friendship saved = friendshipRepository.save(friendship);
+        log.info("Solicitud rechazada - id={} userId={} friendId={}", saved.getId(), saved.getUserId(), saved.getFriendId());
+        return friendshipMapper.toResponse(saved);
     }
     @Transactional
     public void deleteFriendship(Long userId, Long friendshipId) {
+        log.info("Eliminando relación de amistad - userId={} friendshipId={}", userId, friendshipId);
         Friendship friendship = friendshipRepository.findById(friendshipId)
                 .orElseThrow(() -> new EntityNotFoundException("Relación de amistad no encontrada"));
         if (!friendship.getFriendId().equals(userId)||!friendship.getUserId().equals(userId)) {
             throw new IllegalArgumentException("No perteneces a esta relación de amistad");
         }
         friendshipRepository.delete(friendship);
+        log.info("Relación de amistad eliminada - id={} userId={} friendId={}", friendshipId, friendship.getUserId(), friendship.getFriendId());
     }
 }

@@ -1,6 +1,9 @@
 server:
   port: 8090
-
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 spring:
   application:
     name: ms-gateway
@@ -9,129 +12,147 @@ spring:
       server:
         webflux:
           routes:
+            - id: ms-admin
+              uri: lb://ms-admin
+              predicates:
+                - Path=/admin/**
+
             - id: ms-usuario
-              uri: http://localhost:8081
+              uri: lb://ms-usuario
               predicates:
                 - Path=/api/v1/usuarios/**
 
             - id: ms-profile
-              uri: http://localhost:8082
+              uri: lb://ms-profile
               predicates:
                 - Path=/api/v1/profiles/**
 
             - id: ms-purchase
-              uri: http://localhost:8083
+              uri: lb://ms-purchase
               predicates:
                 - Path=/api/v1/purchases/**
 
             - id: ms-review
-              uri: http://localhost:8084
+              uri: lb://ms-review
               predicates:
                 - Path=/api/v1/reviews/**
 
             - id: ms-wishlist
-              uri: http://localhost:8085
+              uri: lb://ms-wishlist
               predicates:
                 - Path=/api/v1/wishlists/**
 
             - id: ms-notification
-              uri: http://localhost:8086
+              uri: lb://ms-notification
               predicates:
                 - Path=/api/v1/notifications/**
 
             - id: ms-stats
-              uri: http://localhost:8087
+              uri: lb://ms-stats
               predicates:
                 - Path=/api/v1/stats/**
 
             - id: ms-library
-              uri: http://localhost:8088
+              uri: lb://ms-library
               predicates:
                 - Path=/api/v1/library/**
 
             - id: ms-friendship
-              uri: http://localhost:8089
+              uri: lb://ms-friendship
               predicates:
                 - Path=/api/v1/friendships/**
 
             - id: ms-juego
-              uri: http://localhost:8080
+              uri: lb://ms-juego
               predicates:
                 - Path=/api/v1/juegos/**,/api/v1/generos/**,/api/v1/plataformas/**,/api/v1/estudios/**
 
             - id: api-docs-juego
-              uri: http://localhost:8080
+              uri: lb://ms-juego
               predicates:
                 - Path=/api-docs/juego
               filters:
                 - RewritePath=/api-docs/juego, /v3/api-docs
 
             - id: api-docs-usuario
-              uri: http://localhost:8081
+              uri: lb://ms-usuario
               predicates:
                 - Path=/api-docs/usuario
               filters:
                 - RewritePath=/api-docs/usuario, /v3/api-docs
 
             - id: api-docs-profile
-              uri: http://localhost:8082
+              uri: lb://ms-profile
               predicates:
                 - Path=/api-docs/profile
               filters:
                 - RewritePath=/api-docs/profile, /v3/api-docs
 
             - id: api-docs-purchase
-              uri: http://localhost:8083
+              uri: lb://ms-purchase
               predicates:
                 - Path=/api-docs/purchase
               filters:
                 - RewritePath=/api-docs/purchase, /v3/api-docs
 
             - id: api-docs-review
-              uri: http://localhost:8084
+              uri: lb://ms-review
               predicates:
                 - Path=/api-docs/review
               filters:
                 - RewritePath=/api-docs/review, /v3/api-docs
 
             - id: api-docs-wishlist
-              uri: http://localhost:8085
+              uri: lb://ms-wishlist
               predicates:
                 - Path=/api-docs/wishlist
               filters:
                 - RewritePath=/api-docs/wishlist, /v3/api-docs
 
             - id: api-docs-notification
-              uri: http://localhost:8086
+              uri: lb://ms-notification
               predicates:
                 - Path=/api-docs/notification
               filters:
                 - RewritePath=/api-docs/notification, /v3/api-docs
 
             - id: api-docs-stats
-              uri: http://localhost:8087
+              uri: lb://ms-stats
               predicates:
                 - Path=/api-docs/stats
               filters:
                 - RewritePath=/api-docs/stats, /v3/api-docs
 
             - id: api-docs-library
-              uri: http://localhost:8088
+              uri: lb://ms-library
               predicates:
                 - Path=/api-docs/library
               filters:
                 - RewritePath=/api-docs/library, /v3/api-docs
 
             - id: api-docs-friendship
-              uri: http://localhost:8089
+              uri: lb://ms-friendship
               predicates:
                 - Path=/api-docs/friendship
               filters:
                 - RewritePath=/api-docs/friendship, /v3/api-docs
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: ms-gateway
+
 springdoc:
   swagger-ui:
-    urls:
+    URLs:
       - name: ms-juego
         url: /api-docs/juego
       - name: ms-usuario

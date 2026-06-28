@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ public class PurchaseController {
     public ResponseEntity<Page<PurchaseResponse>> findAllByUserId(
             @Parameter(description = "ID del usuario")
             @PathVariable Long id,
-            Pageable pageable) {
+            @ParameterObject Pageable pageable) {
 
         log.debug("GET /api/v1/purchases/{} - página: {} tamaño: {}", id,
                 pageable.getPageNumber(), pageable.getPageSize());
@@ -56,7 +57,7 @@ public class PurchaseController {
             @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
     })
     @GetMapping
-    public ResponseEntity<Page<PurchaseResponse>> findAll(Pageable pageable) {
+    public ResponseEntity<Page<PurchaseResponse>> findAll(@ParameterObject Pageable pageable) {
 
         log.debug("GET /api/v1/purchases - página: {} tamaño: {}",
                 pageable.getPageNumber(),

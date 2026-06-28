@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -39,7 +40,7 @@ public class NotificationController {
     public ResponseEntity<Page<NotificationResponse>> getAllByUserId(
             @Parameter(description = "ID del usuario")
             @PathVariable Long userId,
-            Pageable pageable) {
+            @ParameterObject Pageable pageable) {
 
         log.debug("GET /api/v1/notifications/{} - página: {} tamaño: {}",
                 userId,

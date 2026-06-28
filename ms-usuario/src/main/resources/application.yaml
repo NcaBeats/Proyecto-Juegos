@@ -1,6 +1,8 @@
 spring:
   application:
     name: ms-usuario
+  config:
+    import: classpath:actuator-defaults.yaml
 
   datasource:
     url: jdbc:postgresql://localhost:5433/db_usuario

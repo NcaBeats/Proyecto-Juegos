@@ -1,6 +1,8 @@
 spring:
   application:
     name: ms-juego
+  config:
+    import: classpath:actuator-defaults.yaml
 
   datasource:
     url: jdbc:postgresql://localhost:5432/db_juego

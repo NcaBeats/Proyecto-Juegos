@@ -1,6 +1,8 @@
 spring:
   application:
     name: ms-friendship
+  config:
+    import: classpath:actuator-defaults.yaml
 
   datasource:
     url: jdbc:postgresql://localhost:5440/db_friendship

@@ -1,5 +1,6 @@
 package com.app.msnotification.controller;
 
+import com.app.msnotification.assembler.NotificationAssembler;
 import com.app.msnotification.dto.NotificationRequest;
 import com.app.msnotification.dto.NotificationResponse;
 import com.app.msnotification.dto.PurchaseNotificationRequest;
@@ -13,8 +14,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +33,8 @@ import org.springframework.web.bind.annotation.*;
 public class NotificationController {
 
     private final NotificationService notificationService;
+    private final NotificationAssembler notificationAssembler;
+    private final PagedResourcesAssembler<NotificationResponse> pagedResourcesAssembler;
 
     @Operation(summary = "Obtener todas las notificaciones de un usuario")
     @ApiResponses(value = {
@@ -37,7 +42,7 @@ public class NotificationController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @GetMapping("/{userId}")
-    public ResponseEntity<Page<NotificationResponse>> getAllByUserId(
+    public ResponseEntity<PagedModel<EntityModel<NotificationResponse>>> getAllByUserId(
             @Parameter(description = "ID del usuario")
             @PathVariable Long userId,
             @ParameterObject Pageable pageable) {
@@ -48,7 +53,7 @@ public class NotificationController {
                 pageable.getPageSize());
 
         return ResponseEntity.ok(
-                notificationService.getAllByUserId(userId, pageable)
+                pagedResourcesAssembler.toModel(notificationService.getAllByUserId(userId, pageable), notificationAssembler)
         );
     }
 
@@ -58,14 +63,14 @@ public class NotificationController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
     @PostMapping
-    public ResponseEntity<NotificationResponse> save(
+    public ResponseEntity<EntityModel<NotificationResponse>> save(
             @Valid @RequestBody NotificationRequest notificationRequest) {
 
         log.info("POST /api/v1/notifications - creando notificación para userId={}",
                 notificationRequest.userId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(notificationService.save(notificationRequest));
+                .body(notificationAssembler.toModel(notificationService.save(notificationRequest)));
     }
 
     @Operation(summary = "Crear notificaciones automáticas por compra")

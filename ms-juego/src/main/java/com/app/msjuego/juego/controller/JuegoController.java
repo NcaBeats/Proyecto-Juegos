@@ -1,5 +1,6 @@
 package com.app.msjuego.juego.controller;
 
+import com.app.msjuego.juego.assembler.JuegoAssembler;
 import com.app.msjuego.juego.dto.JuegoRequest;
 import com.app.msjuego.juego.dto.JuegoResponse;
 import com.app.msjuego.juego.service.JuegoService;
@@ -12,8 +13,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,15 +32,17 @@ import org.springframework.web.bind.annotation.*;
 public class JuegoController {
 
     private final JuegoService juegoService;
+    private final JuegoAssembler juegoAssembler;
+    private final PagedResourcesAssembler<JuegoResponse> pagedResourcesAssembler;
 
     @Operation(summary = "Obtener todos los juegos")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
     })
     @GetMapping
-    public ResponseEntity<Page<JuegoResponse>> findAll(@ParameterObject Pageable pageable) {
+    public ResponseEntity<PagedModel<EntityModel<JuegoResponse>>> findAll(@ParameterObject Pageable pageable) {
         log.debug("GET /api/v1/juegos - página: {} tamaño: {}", pageable.getPageNumber(), pageable.getPageSize());
-        return ResponseEntity.ok(juegoService.findAll(pageable));
+        return ResponseEntity.ok(pagedResourcesAssembler.toModel(juegoService.findAll(pageable), juegoAssembler));
     }
 
     @Operation(summary = "Obtener un juego por ID")
@@ -46,12 +51,12 @@ public class JuegoController {
             @ApiResponse(responseCode = "404", description = "Juego no encontrado")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<JuegoResponse> findById(
+    public ResponseEntity<EntityModel<JuegoResponse>> findById(
             @Parameter(description = "ID del juego")
             @Valid @PathVariable Long id) {
 
         log.debug("GET /api/v1/juegos/{}", id);
-        return ResponseEntity.ok(juegoService.findById(id));
+        return ResponseEntity.ok(juegoAssembler.toModel(juegoService.findById(id)));
     }
 
     @Operation(summary = "Obtener juegos por estudio")
@@ -59,13 +64,13 @@ public class JuegoController {
             @ApiResponse(responseCode = "200", description = "Juegos obtenidos correctamente")
     })
     @GetMapping("/estudio/{estudioId}")
-    public ResponseEntity<Page<JuegoResponse>> getAllByEstudioId(
+    public ResponseEntity<PagedModel<EntityModel<JuegoResponse>>> getAllByEstudioId(
             @Parameter(description = "ID del estudio")
             @PathVariable Long estudioId,
             Pageable pageable) {
 
         log.debug("GET /api/v1/juegos/estudio/{} - página: {} tamaño: {}", estudioId, pageable.getPageNumber(), pageable.getPageSize());
-        return ResponseEntity.ok(juegoService.getAllByEstudioId(estudioId, pageable));
+        return ResponseEntity.ok(pagedResourcesAssembler.toModel(juegoService.getAllByEstudioId(estudioId, pageable), juegoAssembler));
     }
 
     @Operation(summary = "Obtener juegos por género")
@@ -73,13 +78,13 @@ public class JuegoController {
             @ApiResponse(responseCode = "200", description = "Juegos obtenidos correctamente")
     })
     @GetMapping("/genero/{generoId}")
-    public ResponseEntity<Page<JuegoResponse>> getAllByGenerosId(
+    public ResponseEntity<PagedModel<EntityModel<JuegoResponse>>> getAllByGenerosId(
             @Parameter(description = "ID del género")
             @PathVariable Long generoId,
             Pageable pageable) {
 
         log.debug("GET /api/v1/juegos/genero/{} - página: {} tamaño: {}", generoId, pageable.getPageNumber(), pageable.getPageSize());
-        return ResponseEntity.ok(juegoService.getAllByGenerosId(generoId, pageable));
+        return ResponseEntity.ok(pagedResourcesAssembler.toModel(juegoService.getAllByGenerosId(generoId, pageable), juegoAssembler));
     }
 
     @Operation(summary = "Obtener juegos por plataforma")
@@ -87,13 +92,13 @@ public class JuegoController {
             @ApiResponse(responseCode = "200", description = "Juegos obtenidos correctamente")
     })
     @GetMapping("/plataforma/{plataformaId}")
-    public ResponseEntity<Page<JuegoResponse>> getAllByPlataformasId(
+    public ResponseEntity<PagedModel<EntityModel<JuegoResponse>>> getAllByPlataformasId(
             @Parameter(description = "ID de la plataforma")
             @PathVariable Long plataformaId,
             Pageable pageable) {
 
         log.debug("GET /api/v1/juegos/plataforma/{} - página: {} tamaño: {}", plataformaId, pageable.getPageNumber(), pageable.getPageSize());
-        return ResponseEntity.ok(juegoService.getAllByPlataformasId(plataformaId, pageable));
+        return ResponseEntity.ok(pagedResourcesAssembler.toModel(juegoService.getAllByPlataformasId(plataformaId, pageable), juegoAssembler));
     }
 
     @Operation(summary = "Buscar juego por nombre")
@@ -102,12 +107,12 @@ public class JuegoController {
             @ApiResponse(responseCode = "404", description = "Juego no encontrado")
     })
     @GetMapping("/buscar")
-    public ResponseEntity<JuegoResponse> buscarPorNombre(
+    public ResponseEntity<EntityModel<JuegoResponse>> buscarPorNombre(
             @Parameter(description = "Nombre del juego")
             @RequestParam String nombre) {
 
         log.debug("GET /api/v1/juegos/buscar nombre={}", nombre);
-        return ResponseEntity.ok(juegoService.findByNombre(nombre));
+        return ResponseEntity.ok(juegoAssembler.toModel(juegoService.findByNombre(nombre)));
     }
 
     @Operation(summary = "Crear un nuevo juego")
@@ -116,9 +121,9 @@ public class JuegoController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
     @PostMapping
-    public ResponseEntity<JuegoResponse> save(@Valid @RequestBody JuegoRequest request) {
+    public ResponseEntity<EntityModel<JuegoResponse>> save(@Valid @RequestBody JuegoRequest request) {
         log.info("POST /api/v1/juegos - creando juego");
-        return ResponseEntity.status(HttpStatus.CREATED).body(juegoService.save(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(juegoAssembler.toModel(juegoService.save(request)));
     }
 
     @Operation(summary = "Actualizar un juego")
@@ -127,13 +132,13 @@ public class JuegoController {
             @ApiResponse(responseCode = "404", description = "Juego no encontrado")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<JuegoResponse> update(
+    public ResponseEntity<EntityModel<JuegoResponse>> update(
             @Parameter(description = "ID del juego")
             @PathVariable Long id,
             @Valid @RequestBody JuegoRequest request) {
 
         log.info("PUT /api/v1/juegos/{} - actualizando juego", id);
-        return ResponseEntity.ok(juegoService.update(id, request));
+        return ResponseEntity.ok(juegoAssembler.toModel(juegoService.update(id, request)));
     }
 
     @Operation(summary = "Eliminar un juego")

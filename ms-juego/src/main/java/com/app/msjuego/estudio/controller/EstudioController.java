@@ -1,5 +1,6 @@
 package com.app.msjuego.estudio.controller;
 
+import com.app.msjuego.estudio.assembler.EstudioAssembler;
 import com.app.msjuego.estudio.dto.EstudioRequest;
 import com.app.msjuego.estudio.dto.EstudioResponse;
 import com.app.msjuego.estudio.service.EstudioService;
@@ -12,8 +13,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +32,8 @@ import org.springframework.web.bind.annotation.*;
 public class EstudioController {
 
     private final EstudioService estudioService;
+    private final EstudioAssembler estudioAssembler;
+    private final PagedResourcesAssembler<EstudioResponse> pagedResourcesAssembler;
 
     @Operation(summary = "Obtener un estudio por ID")
     @ApiResponses(value = {
@@ -36,12 +41,12 @@ public class EstudioController {
             @ApiResponse(responseCode = "404", description = "Estudio no encontrado")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<EstudioResponse> findById(
+    public ResponseEntity<EntityModel<EstudioResponse>> findById(
             @Parameter(description = "ID del estudio")
             @Valid @PathVariable Long id) {
 
         log.debug("GET /api/v1/estudios/{}", id);
-        return ResponseEntity.ok(estudioService.findById(id));
+        return ResponseEntity.ok(estudioAssembler.toModel(estudioService.findById(id)));
     }
 
     @Operation(summary = "Obtener todos los estudios")
@@ -49,10 +54,10 @@ public class EstudioController {
             @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
     })
     @GetMapping
-    public ResponseEntity<Page<EstudioResponse>> findAll(@ParameterObject Pageable pageable) {
+    public ResponseEntity<PagedModel<EntityModel<EstudioResponse>>> findAll(@ParameterObject Pageable pageable) {
 
         log.debug("GET /api/v1/estudios - página: {} tamaño: {}", pageable.getPageNumber(), pageable.getPageSize());
-        return ResponseEntity.ok(estudioService.findAll(pageable));
+        return ResponseEntity.ok(pagedResourcesAssembler.toModel(estudioService.findAll(pageable), estudioAssembler));
     }
 
     @Operation(summary = "Crear un nuevo estudio")
@@ -61,10 +66,10 @@ public class EstudioController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
     @PostMapping
-    public ResponseEntity<EstudioResponse> save(@Valid @RequestBody EstudioRequest request) {
+    public ResponseEntity<EntityModel<EstudioResponse>> save(@Valid @RequestBody EstudioRequest request) {
 
         log.info("POST /api/v1/estudios - creando estudio");
-        return ResponseEntity.status(HttpStatus.CREATED).body(estudioService.save(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(estudioAssembler.toModel(estudioService.save(request)));
     }
 
     @Operation(summary = "Actualizar un estudio")
@@ -73,13 +78,13 @@ public class EstudioController {
             @ApiResponse(responseCode = "404", description = "Estudio no encontrado")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<EstudioResponse> update(
+    public ResponseEntity<EntityModel<EstudioResponse>> update(
             @Parameter(description = "ID del estudio")
             @PathVariable Long id,
             @Valid @RequestBody EstudioRequest request) {
 
         log.info("PUT /api/v1/estudios/{} - actualizando estudio", id);
-        return ResponseEntity.ok(estudioService.update(id, request));
+        return ResponseEntity.ok(estudioAssembler.toModel(estudioService.update(id, request)));
     }
 
     @Operation(summary = "Eliminar un estudio")

@@ -1,5 +1,6 @@
 package com.app.msjuego.plataforma.controller;
 
+import com.app.msjuego.plataforma.assembler.PlataformaAssembler;
 import com.app.msjuego.plataforma.dto.PlataformaRequest;
 import com.app.msjuego.plataforma.dto.PlataformaResponse;
 import com.app.msjuego.plataforma.service.PlataformaService;
@@ -12,8 +13,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +32,8 @@ import org.springframework.web.bind.annotation.*;
 public class PlataformaController {
 
     private final PlataformaService plataformaService;
+    private final PlataformaAssembler plataformaAssembler;
+    private final PagedResourcesAssembler<PlataformaResponse> pagedResourcesAssembler;
 
     @Operation(summary = "Obtener una plataforma por ID")
     @ApiResponses(value = {
@@ -36,12 +41,12 @@ public class PlataformaController {
             @ApiResponse(responseCode = "404", description = "Plataforma no encontrada")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<PlataformaResponse> findById(
+    public ResponseEntity<EntityModel<PlataformaResponse>> findById(
             @Parameter(description = "ID de la plataforma")
             @Valid @PathVariable Long id) {
 
         log.debug("GET /api/v1/plataformas/{}", id);
-        return ResponseEntity.ok(plataformaService.findById(id));
+        return ResponseEntity.ok(plataformaAssembler.toModel(plataformaService.findById(id)));
     }
 
     @Operation(summary = "Obtener todas las plataformas")
@@ -49,10 +54,10 @@ public class PlataformaController {
             @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
     })
     @GetMapping
-    public ResponseEntity<Page<PlataformaResponse>> findAll(@ParameterObject Pageable pageable) {
+    public ResponseEntity<PagedModel<EntityModel<PlataformaResponse>>> findAll(@ParameterObject Pageable pageable) {
 
         log.debug("GET /api/v1/plataformas - página: {} tamaño: {}", pageable.getPageNumber(), pageable.getPageSize());
-        return ResponseEntity.ok(plataformaService.findAll(pageable));
+        return ResponseEntity.ok(pagedResourcesAssembler.toModel(plataformaService.findAll(pageable), plataformaAssembler));
     }
 
     @Operation(summary = "Crear una nueva plataforma")
@@ -61,10 +66,10 @@ public class PlataformaController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
     @PostMapping
-    public ResponseEntity<PlataformaResponse> save(@Valid @RequestBody PlataformaRequest request) {
+    public ResponseEntity<EntityModel<PlataformaResponse>> save(@Valid @RequestBody PlataformaRequest request) {
 
         log.info("POST /api/v1/plataformas - creando plataforma");
-        return ResponseEntity.status(HttpStatus.CREATED).body(plataformaService.save(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(plataformaAssembler.toModel(plataformaService.save(request)));
     }
 
     @Operation(summary = "Actualizar una plataforma")
@@ -73,13 +78,13 @@ public class PlataformaController {
             @ApiResponse(responseCode = "404", description = "Plataforma no encontrada")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<PlataformaResponse> update(
+    public ResponseEntity<EntityModel<PlataformaResponse>> update(
             @Parameter(description = "ID de la plataforma")
             @PathVariable Long id,
             @Valid @RequestBody PlataformaRequest request) {
 
         log.info("PUT /api/v1/plataformas/{} - actualizando plataforma", id);
-        return ResponseEntity.ok(plataformaService.update(id, request));
+        return ResponseEntity.ok(plataformaAssembler.toModel(plataformaService.update(id, request)));
     }
 
     @Operation(summary = "Eliminar una plataforma")

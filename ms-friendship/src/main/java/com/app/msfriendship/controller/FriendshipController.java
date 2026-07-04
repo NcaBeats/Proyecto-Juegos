@@ -1,5 +1,6 @@
 package com.app.msfriendship.controller;
 
+import com.app.msfriendship.assembler.FriendshipAssembler;
 import com.app.msfriendship.dto.FriendshipRequest;
 import com.app.msfriendship.dto.FriendshipResponse;
 import com.app.msfriendship.service.FriendshipService;
@@ -11,6 +12,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +31,7 @@ import java.util.List;
 public class FriendshipController {
 
     private final FriendshipService friendshipService;
+    private final FriendshipAssembler friendshipAssembler;
 
     @Operation(summary = "Enviar una solicitud de amistad")
     @ApiResponses(value = {
@@ -36,7 +40,7 @@ public class FriendshipController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @PostMapping("/request")
-    public ResponseEntity<FriendshipResponse> sendRequest(
+    public ResponseEntity<EntityModel<FriendshipResponse>> sendRequest(
 
             @Parameter(description = "ID del usuario que envía la solicitud")
             @RequestParam Long userId,
@@ -48,7 +52,7 @@ public class FriendshipController {
                 request.friendId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(friendshipService.sendRequest(userId, request));
+                .body(friendshipAssembler.toModel(friendshipService.sendRequest(userId, request)));
     }
 
     @Operation(summary = "Aceptar una solicitud de amistad")
@@ -57,7 +61,7 @@ public class FriendshipController {
             @ApiResponse(responseCode = "404", description = "Solicitud no encontrada")
     })
     @PutMapping("/{id}/accept")
-    public ResponseEntity<FriendshipResponse> acceptRequest(
+    public ResponseEntity<EntityModel<FriendshipResponse>> acceptRequest(
 
             @Parameter(description = "ID de la solicitud de amistad")
             @PathVariable Long id,
@@ -71,7 +75,7 @@ public class FriendshipController {
                 id);
 
         return ResponseEntity.ok(
-                friendshipService.acceptRequest(userId, id)
+                friendshipAssembler.toModel(friendshipService.acceptRequest(userId, id))
         );
     }
 
@@ -81,7 +85,7 @@ public class FriendshipController {
             @ApiResponse(responseCode = "404", description = "Solicitud no encontrada")
     })
     @PutMapping("/{id}/reject")
-    public ResponseEntity<FriendshipResponse> rejectRequest(
+    public ResponseEntity<EntityModel<FriendshipResponse>> rejectRequest(
 
             @Parameter(description = "ID de la solicitud de amistad")
             @PathVariable Long id,
@@ -95,7 +99,7 @@ public class FriendshipController {
                 id);
 
         return ResponseEntity.ok(
-                friendshipService.rejectRequest(userId, id)
+                friendshipAssembler.toModel(friendshipService.rejectRequest(userId, id))
         );
     }
 
@@ -104,7 +108,7 @@ public class FriendshipController {
             @ApiResponse(responseCode = "200", description = "Lista obtenida correctamente")
     })
     @GetMapping("/{userId}/friends")
-    public ResponseEntity<List<FriendshipResponse>> getFriends(
+    public ResponseEntity<CollectionModel<EntityModel<FriendshipResponse>>> getFriends(
 
             @Parameter(description = "ID del usuario")
             @PathVariable Long userId) {
@@ -113,9 +117,11 @@ public class FriendshipController {
                 userId,
                 userId);
 
-        return ResponseEntity.ok(
-                friendshipService.getFriends(userId)
-        );
+        List<EntityModel<FriendshipResponse>> friends = friendshipService.getFriends(userId).stream()
+                .map(friendshipAssembler::toModel)
+                .toList();
+
+        return ResponseEntity.ok(CollectionModel.of(friends));
     }
 
     @Operation(summary = "Obtener solicitudes pendientes")
@@ -123,7 +129,7 @@ public class FriendshipController {
             @ApiResponse(responseCode = "200", description = "Solicitudes obtenidas correctamente")
     })
     @GetMapping("/{userId}/pending")
-    public ResponseEntity<List<FriendshipResponse>> getPendingRequests(
+    public ResponseEntity<CollectionModel<EntityModel<FriendshipResponse>>> getPendingRequests(
 
             @Parameter(description = "ID del usuario")
             @PathVariable Long userId) {
@@ -132,9 +138,11 @@ public class FriendshipController {
                 userId,
                 userId);
 
-        return ResponseEntity.ok(
-                friendshipService.getPendingRequests(userId)
-        );
+        List<EntityModel<FriendshipResponse>> pending = friendshipService.getPendingRequests(userId).stream()
+                .map(friendshipAssembler::toModel)
+                .toList();
+
+        return ResponseEntity.ok(CollectionModel.of(pending));
     }
 
     @Operation(summary = "Eliminar una amistad")

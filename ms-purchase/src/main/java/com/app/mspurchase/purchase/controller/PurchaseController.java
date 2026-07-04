@@ -1,5 +1,6 @@
 package com.app.mspurchase.purchase.controller;
 
+import com.app.mspurchase.purchase.assembler.PurchaseAssembler;
 import com.app.mspurchase.purchase.dto.PurchaseRequest;
 import com.app.mspurchase.purchase.dto.PurchaseResponse;
 import com.app.mspurchase.purchase.service.PurchaseService;
@@ -13,8 +14,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +35,8 @@ import java.util.List;
 public class PurchaseController {
 
     private final PurchaseService purchaseService;
+    private final PurchaseAssembler purchaseAssembler;
+    private final PagedResourcesAssembler<PurchaseResponse> pagedResourcesAssembler;
 
     @Operation(summary = "Obtener compras de un usuario")
     @ApiResponses(value = {
@@ -39,7 +44,7 @@ public class PurchaseController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Page<PurchaseResponse>> findAllByUserId(
+    public ResponseEntity<PagedModel<EntityModel<PurchaseResponse>>> findAllByUserId(
             @Parameter(description = "ID del usuario")
             @PathVariable Long id,
             @ParameterObject Pageable pageable) {
@@ -48,7 +53,7 @@ public class PurchaseController {
                 pageable.getPageNumber(), pageable.getPageSize());
 
         return ResponseEntity.ok(
-                purchaseService.findAllByUserId(id, pageable)
+                pagedResourcesAssembler.toModel(purchaseService.findAllByUserId(id, pageable), purchaseAssembler)
         );
     }
 
@@ -57,14 +62,14 @@ public class PurchaseController {
             @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
     })
     @GetMapping
-    public ResponseEntity<Page<PurchaseResponse>> findAll(@ParameterObject Pageable pageable) {
+    public ResponseEntity<PagedModel<EntityModel<PurchaseResponse>>> findAll(@ParameterObject Pageable pageable) {
 
         log.debug("GET /api/v1/purchases - página: {} tamaño: {}",
                 pageable.getPageNumber(),
                 pageable.getPageSize());
 
         return ResponseEntity.ok(
-                purchaseService.findAll(pageable)
+                pagedResourcesAssembler.toModel(purchaseService.findAll(pageable), purchaseAssembler)
         );
     }
 
@@ -74,7 +79,7 @@ public class PurchaseController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
     @PostMapping
-    public ResponseEntity<PurchaseResponse> createPurchase(
+    public ResponseEntity<EntityModel<PurchaseResponse>> createPurchase(
             @Valid @RequestBody PurchaseRequest request) {
 
         log.info("POST /api/v1/purchases - creando compra userId={} juegosCount={}",
@@ -86,7 +91,7 @@ public class PurchaseController {
         log.info("Compra creada para userId={}", request.userId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(response);
+                .body(purchaseAssembler.toModel(response));
     }
 
     @Operation(summary = "Obtener estadísticas de compras de un juego")

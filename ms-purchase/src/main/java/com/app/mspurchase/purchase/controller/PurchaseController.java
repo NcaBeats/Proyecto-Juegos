@@ -30,7 +30,7 @@ import java.util.List;
 @Slf4j
 @Tag(
         name = "Compras",
-        description = "Gestión de compras de videojuegos de la plataforma Nico's Games"
+        description = "Gestión de compras"
 )
 public class PurchaseController {
 

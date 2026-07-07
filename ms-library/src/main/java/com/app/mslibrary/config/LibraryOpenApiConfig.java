@@ -15,7 +15,7 @@ public class LibraryOpenApiConfig {
                         new Info()
                                 .title("Microservicio Library")
                                 .version("1.0")
-                                .description("Gestión de la biblioteca de juegos de Nico's Games")
+                                .description("Gestión de biblioteca de juegos")
                 );
     }
 }

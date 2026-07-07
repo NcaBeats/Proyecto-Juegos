@@ -15,7 +15,7 @@ public class JuegoOpenApiConfig {
                         new Info()
                                 .title("Microservicio Juegos")
                                 .version("1.0")
-                                .description("Gestión de juegos, géneros, estudios y plataformas de Nico's Games")
+                                .description("Gestión de juegos, géneros, estudios y plataformas")
                 );
     }
 }

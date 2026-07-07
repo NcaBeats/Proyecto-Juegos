@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1/plataformas")
 @Tag(
         name = "Plataformas",
-        description = "Gestión de plataformas de videojuegos de la plataforma Nico's Games"
+        description = "Gestión de plataformas de videojuegos"
 )
 public class PlataformaController {
 

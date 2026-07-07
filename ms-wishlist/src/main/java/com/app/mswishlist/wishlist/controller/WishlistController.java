@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/wishlists")
 @Tag(
         name = "Wishlist",
-        description = "Gestión de listas de deseos de la plataforma Nico's Games"
+        description = "Gestión de listas de deseos"
 )
 public class WishlistController {
 

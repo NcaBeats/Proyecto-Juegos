@@ -1,5 +1,6 @@
 server:
   port: 8090
+  forward-headers-strategy: framework
 eureka:
   client:
     service-url:
@@ -11,6 +12,7 @@ spring:
     gateway:
       server:
         webflux:
+          trusted-proxies: ".*"
           routes:
             - id: ms-admin
               uri: lb://ms-admin

@@ -15,7 +15,7 @@ public class UsuarioOpenApiConfig {
                         new Info()
                                 .title("Microservicio Usuarios")
                                 .version("1.0")
-                                .description("Gestión de usuarios de la plataforma Nico's Games")
+                                .description("Gestión de usuarios")
                 );
     }
 }

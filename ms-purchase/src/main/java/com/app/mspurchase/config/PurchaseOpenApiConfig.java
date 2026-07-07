@@ -15,7 +15,7 @@ public class PurchaseOpenApiConfig {
                         new Info()
                                 .title("Microservicio Purchases")
                                 .version("1.0")
-                                .description("Gestión de compras de videojuegos de Nico's Games")
+                                .description("Gestión de compras")
                 );
     }
 }

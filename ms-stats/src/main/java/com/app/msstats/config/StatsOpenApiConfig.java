@@ -15,7 +15,7 @@ public class StatsOpenApiConfig {
                         new Info()
                                 .title("Microservicio Stats")
                                 .version("1.0")
-                                .description("Estadísticas de usuarios y videojuegos de Nico's Games")
+                                .description("Estadísticas de usuarios y juegos")
                 );
     }
 }

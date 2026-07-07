@@ -15,7 +15,7 @@ public class ProfileOpenApiConfig {
                         new Info()
                                 .title("Microservicio Profiles")
                                 .version("1.0")
-                                .description("Gestión de perfiles de usuario de Nico's Games")
+                                .description("Gestión de perfiles de usuario")
                 );
     }
 }

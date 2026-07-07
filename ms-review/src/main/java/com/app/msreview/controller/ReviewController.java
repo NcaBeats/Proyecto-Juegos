@@ -26,7 +26,7 @@ import java.util.List;
 @RequestMapping("/api/v1/reviews")
 @Tag(
         name = "Reviews",
-        description = "Gestión de reseñas de videojuegos de la plataforma Nico's Games"
+        description = "Gestión de reseñas"
 )
 public class ReviewController {
 

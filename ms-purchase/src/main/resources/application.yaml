@@ -1,6 +1,8 @@
 spring:
   application:
     name: ms-purchase
+  config:
+    import: classpath:actuator-defaults.yaml
 
   datasource:
     url: jdbc:postgresql://localhost:5437/db_purchase

@@ -1,5 +1,7 @@
 package com.app.msstats.controller;
 
+import com.app.msstats.assembler.GameStatsAssembler;
+import com.app.msstats.assembler.UserStatsAssembler;
 import com.app.msstats.dto.GameStatsResponse;
 import com.app.msstats.dto.UserStatsResponse;
 import com.app.msstats.service.StatsService;
@@ -10,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 public class StatsController {
 
     private final StatsService statsService;
+    private final GameStatsAssembler gameStatsAssembler;
+    private final UserStatsAssembler userStatsAssembler;
 
     @Operation(summary = "Obtener estadísticas de un videojuego")
     @ApiResponses(value = {
@@ -31,7 +36,7 @@ public class StatsController {
             @ApiResponse(responseCode = "404", description = "Juego no encontrado")
     })
     @GetMapping("/game/{gameId}")
-    public ResponseEntity<GameStatsResponse> getStatsByGame(
+    public ResponseEntity<EntityModel<GameStatsResponse>> getStatsByGame(
 
             @Parameter(description = "ID del videojuego")
             @PathVariable Long gameId) {
@@ -40,7 +45,7 @@ public class StatsController {
                 gameId);
 
         return ResponseEntity.ok(
-                statsService.getGameStats(gameId)
+                gameStatsAssembler.toModel(statsService.getGameStats(gameId))
         );
     }
 
@@ -50,7 +55,7 @@ public class StatsController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @GetMapping("/user/{userId}")
-    public ResponseEntity<UserStatsResponse> getStatsByUser(
+    public ResponseEntity<EntityModel<UserStatsResponse>> getStatsByUser(
 
             @Parameter(description = "ID del usuario")
             @PathVariable Long userId) {
@@ -59,7 +64,7 @@ public class StatsController {
                 userId);
 
         return ResponseEntity.ok(
-                statsService.getUserStats(userId)
+                userStatsAssembler.toModel(statsService.getUserStats(userId))
         );
     }
 }

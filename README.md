@@ -6,7 +6,7 @@ Sistema de gestión de videojuegos basado en una arquitectura de microservicios.
 
 ## Arquitectura
 
-12 módulos: 10 microservicios de negocio, 1 service registry (Eureka) y 1 API Gateway.  
+13 módulos: 10 microservicios de negocio, 1 service registry (Eureka), 1 API Gateway y 1 panel de monitoreo (Spring Boot Admin).  
 
 ### Microservicios de negocio
 
@@ -25,6 +25,7 @@ Sistema de gestión de videojuegos basado en una arquitectura de microservicios.
 
 - ms-eureka (8761): Service registry. Todos los microservicios se registran aquí al iniciar.
 - ms-gateway (8090): API Gateway. Punto de entrada único para todas las APIs.
+- ms-admin (9090): Spring Boot Admin. Panel de monitoreo para visualizar health, métricas, logs y estado de todos los microservicios.
 
 ###   Cómo se comunican?
 
@@ -76,6 +77,7 @@ Verás el panel de Eureka con la sección **"Instances currently registered with
 | ms-stats | ms-stats | 8087 |
 | ms-library | ms-library | 8088 |
 | ms-friendship | ms-friendship | 8089 |
+| ms-admin | ms-admin | 9090 |
 
 ---
 
@@ -111,6 +113,7 @@ Cada microservicio expone sus endpoints en **dos puertos distintos**:
 | `/api/v1/generos/**` | `http://localhost:8080` | ms-juego |
 | `/api/v1/plataformas/**` | `http://localhost:8080` | ms-juego |
 | `/api/v1/estudios/**` | `http://localhost:8080` | ms-juego |
+| `/admin/**` | `http://localhost:9090` | ms-admin (Spring Boot Admin) |
 
 ### Ejemplo de uso
 
@@ -130,7 +133,8 @@ Ambos devuelven la misma respuesta, pero usando el gateway obtienes una capa de 
 
 1. **ms-eureka** (puerto 8761)
 2. **ms-gateway** (puerto 8090)
-3. **Los demás microservicios**
+3. **ms-admin** (puerto 9090) — una vez que esté en Eureka, comienza a monitorear automáticamente
+4. **Los demás microservicios**
 
 Si un microservicio se inicia antes que Eureka, reintentará conectarse automáticamente.
 
@@ -173,6 +177,70 @@ http://localhost:{puerto}/swagger-ui.html
 
 ---
 
+---
+
+## Monitoreo con Spring Boot Admin
+
+**ms-admin** (puerto `9090`) es un panel de monitoreo que descubre automáticamente todos los microservicios registrados en Eureka y expone dashboards con información en vivo de cada uno.
+
+### Acceder a Spring Boot Admin
+
+```
+http://localhost:8090/admin/applications
+```
+
+### ¿Qué muestra?
+
+| Sección | Información |
+|---------|------------|
+| **Health** | Estado de salud de cada servicio (UP/DOWN) con detalles de BD, disco, etc. |
+| **Metrics** | JVM: memoria heap/no-heap, threads, clases cargadas, CPU, uptime |
+| **Environment** | Properties de cada servicio (`application.yaml`) |
+| **Loggers** | Niveles de log editables en caliente (sin reiniciar) |
+| **Threads** | Thread dump con estado de hilos |
+| **Flyway** | Migraciones aplicadas y pendientes |
+| **Http Traces** | Últimas requests HTTP |
+| **Info** | Información de la aplicación (`info.app.*`) |
+
+### Instalación
+
+El módulo `ms-admin` se registra en Eureka y automáticamente comienza a monitorear todos los servicios. No requiere cambios en los microservicios existentes.
+
+---
+
+## Actuator
+
+Todos los microservicios (excepto el gateway) heredan la dependencia de **Spring Boot Actuator** desde el módulo `common` y exponen todos los endpoints de actuator.
+
+### Endpoints disponibles
+
+| Ruta | Descripción |
+|------|-------------|
+| `/actuator/health` | Health check (UP/DOWN) |
+| `/actuator/info` | Información de la app |
+| `/actuator/env` | Variables de entorno y properties |
+| `/actuator/metrics` | Métricas JVM, CPU, memoria |
+| `/actuator/loggers` | Niveles de log (GET y POST para cambiar en vivo) |
+| `/actuator/beans` | Todos los beans del contexto |
+| `/actuator/mappings` | Request mappings |
+| `/actuator/threaddump` | Thread dump |
+| `/actuator/conditions` | Condiciones de auto-configuración |
+| `/actuator/flyway` | Migraciones de Flyway |
+
+### Acceder a actuator
+
+Cada microservicio expone actuator en su propio puerto:
+
+```
+http://localhost:8080/actuator/health
+http://localhost:8081/actuator/metrics
+http://localhost:8090/actuator/health    (gateway)
+```
+
+> ⚠️ **Solo para desarrollo**: `include: "*"` expone todos los endpoints. En producción se recomienda limitar a `health,info,metrics`.
+
+---
+
 ## Pre-requisitos
 
 - **Java**: JDK 25 (Temurin)  
@@ -199,6 +267,8 @@ http://localhost:{puerto}/swagger-ui.html
   ![Eureka](https://img.shields.io/badge/Eureka-Service%20Discovery-blue?logo=spring&color=blue)
 - **API Gateway**: Spring Cloud Gateway  
   ![Gateway](https://img.shields.io/badge/Spring_Cloud_Gateway-API%20Gateway-brightgreen?logo=spring)
+- **Monitoreo**: Spring Boot Admin + Actuator  
+  ![Admin](https://img.shields.io/badge/Spring_Boot_Admin-Monitoreo-purple?logo=spring)
 - **Mapeo**: MapStruct    
   ![MapStruct](https://img.shields.io/badge/MapStruct-Mapper-orange)
 - **Build**: Maven  

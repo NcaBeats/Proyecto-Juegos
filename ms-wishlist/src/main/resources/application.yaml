@@ -1,6 +1,8 @@
 spring:
   application:
     name: ms-wishlist
+  config:
+    import: classpath:actuator-defaults.yaml
 
   datasource:
     url: jdbc:postgresql://localhost:5435/db_wishlist

@@ -1,6 +1,8 @@
 spring:
   application:
     name: ms-review
+  config:
+    import: classpath:actuator-defaults.yaml
 
   datasource:
     url: jdbc:postgresql://localhost:5436/db_review

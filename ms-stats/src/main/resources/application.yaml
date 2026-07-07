@@ -1,6 +1,8 @@
 spring:
   application:
     name: ms-stats
+  config:
+    import: classpath:actuator-defaults.yaml
 
 server:
   port: 8087

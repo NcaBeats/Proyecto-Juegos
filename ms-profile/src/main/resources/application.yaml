@@ -1,6 +1,8 @@
 spring:
   application:
     name: ms-profile
+  config:
+    import: classpath:actuator-defaults.yaml
 
   datasource:
     url: jdbc:postgresql://localhost:5434/db_profile

@@ -1,5 +1,6 @@
 package com.app.mslibrary.library.controller;
 
+import com.app.mslibrary.library.assembler.LibraryAssembler;
 import com.app.mslibrary.library.dto.LibraryResponse;
 import com.app.mslibrary.librarygame.service.LibraryGameService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +28,7 @@ import java.util.List;
 public class LibraryController {
 
     private final LibraryGameService libraryGameService;
+    private final LibraryAssembler libraryAssembler;
 
     @Operation(summary = "Obtener la biblioteca de un usuario")
     @ApiResponses(value = {
@@ -33,14 +36,14 @@ public class LibraryController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @GetMapping("/{userId}")
-    public ResponseEntity<LibraryResponse> getAllByUserId(
+    public ResponseEntity<EntityModel<LibraryResponse>> getAllByUserId(
             @Parameter(description = "ID del usuario")
             @PathVariable Long userId) {
 
         log.debug("GET /api/v1/library/{} - obteniendo biblioteca", userId);
 
         return ResponseEntity.ok(
-                libraryGameService.findAllByUserId(userId)
+                libraryAssembler.toModel(libraryGameService.findAllByUserId(userId))
         );
     }
 

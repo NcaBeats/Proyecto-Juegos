@@ -1,8 +1,12 @@
 package com.app.msusuario.controller;
 
+import com.app.msusuario.assembler.UsuarioAssembler;
 import com.app.msusuario.dto.UsuarioRequest;
 import com.app.msusuario.dto.UsuarioResponse;
 import com.app.msusuario.service.UsuarioService;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,7 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +34,8 @@ import java.math.BigDecimal;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final UsuarioAssembler usuarioAssembler;
+    private final PagedResourcesAssembler<UsuarioResponse> pagedResourcesAssembler;
 
     @Operation(
             summary = "Listar usuarios",
@@ -39,9 +45,9 @@ public class UsuarioController {
             @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
     })
     @GetMapping
-    public ResponseEntity<Page<UsuarioResponse>> findAll(Pageable pageable) {
+    public ResponseEntity<PagedModel<EntityModel<UsuarioResponse>>> findAll(@ParameterObject Pageable pageable) {
         log.debug("GET /api/v1/usuarios - página: {} tamaño: {}", pageable.getPageNumber(), pageable.getPageSize());
-        return ResponseEntity.ok(usuarioService.findAll(pageable));
+        return ResponseEntity.ok(pagedResourcesAssembler.toModel(usuarioService.findAll(pageable), usuarioAssembler));
     }
 
     @Operation(
@@ -53,12 +59,12 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioResponse> findById(
+    public ResponseEntity<EntityModel<UsuarioResponse>> findById(
             @Parameter(description = "ID del usuario")
             @PathVariable Long id) {
 
         log.debug("GET /api/v1/usuarios/{} - obteniendo usuario", id);
-        return ResponseEntity.ok(usuarioService.findById(id));
+        return ResponseEntity.ok(usuarioAssembler.toModel(usuarioService.findById(id)));
     }
 
     @Operation(
@@ -70,11 +76,11 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @GetMapping("/buscar/email/{email}")
-    public ResponseEntity<UsuarioResponse> findByEmail(
+    public ResponseEntity<EntityModel<UsuarioResponse>> findByEmail(
             @Parameter(description = "Correo electrónico del usuario")
             @PathVariable String email) {
 
-        return ResponseEntity.ok(usuarioService.findByEmail(email));
+        return ResponseEntity.ok(usuarioAssembler.toModel(usuarioService.findByEmail(email)));
     }
 
     @Operation(
@@ -86,11 +92,11 @@ public class UsuarioController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @GetMapping("/buscar/nombre/{nombre}")
-    public ResponseEntity<UsuarioResponse> findByNombre(
+    public ResponseEntity<EntityModel<UsuarioResponse>> findByNombre(
             @Parameter(description = "Nombre del usuario")
             @PathVariable String nombre) {
 
-        return ResponseEntity.ok(usuarioService.findByNombre(nombre));
+        return ResponseEntity.ok(usuarioAssembler.toModel(usuarioService.findByNombre(nombre)));
     }
 
     @Operation(
@@ -102,11 +108,11 @@ public class UsuarioController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
     @PostMapping
-    public ResponseEntity<UsuarioResponse> save(
+    public ResponseEntity<EntityModel<UsuarioResponse>> save(
             @Valid @RequestBody UsuarioRequest usuarioRequest) {
 
         log.info("POST /api/v1/usuarios - creando usuario email={}", usuarioRequest.email());
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.save(usuarioRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioAssembler.toModel(usuarioService.save(usuarioRequest)));
     }
 
     @Operation(
@@ -119,14 +125,14 @@ public class UsuarioController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioResponse> update(
+    public ResponseEntity<EntityModel<UsuarioResponse>> update(
             @Parameter(description = "ID del usuario")
             @PathVariable Long id,
 
             @Valid @RequestBody UsuarioRequest usuarioRequest) {
 
         log.info("PUT /api/v1/usuarios/{} - actualizando usuario", id);
-        return ResponseEntity.ok(usuarioService.update(id, usuarioRequest));
+        return ResponseEntity.ok(usuarioAssembler.toModel(usuarioService.update(id, usuarioRequest)));
     }
 
     @Operation(

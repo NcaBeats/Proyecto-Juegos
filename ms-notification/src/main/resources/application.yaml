@@ -1,6 +1,8 @@
 spring:
   application:
     name: ms-notification
+  config:
+    import: classpath:actuator-defaults.yaml
 
   datasource:
     url: jdbc:postgresql://localhost:5438/db_notification

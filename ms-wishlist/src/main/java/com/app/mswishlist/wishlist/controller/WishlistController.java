@@ -1,5 +1,6 @@
 package com.app.mswishlist.wishlist.controller;
 
+import com.app.mswishlist.wishlist.assembler.WishlistAssembler;
 import com.app.mswishlist.wishlist.dto.WishListResponse;
 import com.app.mswishlist.wishlistgame.dto.WishlistGameRequest;
 import com.app.mswishlist.wishlistgame.dto.WishlistGameResponse;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 public class WishlistController {
 
     private final WishlistGameService wishlistGameService;
+    private final WishlistAssembler wishlistAssembler;
 
     @Operation(summary = "Obtener la wishlist de un usuario")
     @ApiResponses(value = {
@@ -34,12 +37,12 @@ public class WishlistController {
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @GetMapping("/{userId}")
-    public ResponseEntity<WishListResponse> getAllByUserId(
+    public ResponseEntity<EntityModel<WishListResponse>> getAllByUserId(
             @Parameter(description = "ID del usuario")
             @PathVariable Long userId) {
 
         log.debug("GET /api/v1/wishlists/{} - obteniendo wishlist", userId);
-        return ResponseEntity.ok(wishlistGameService.getAllByUserId(userId));
+        return ResponseEntity.ok(wishlistAssembler.toModel(wishlistGameService.getAllByUserId(userId)));
     }
 
     @Operation(summary = "Agregar un juego a la wishlist")

@@ -15,7 +15,7 @@ public class FriendshipOpenApiConfig {
                         new Info()
                                 .title("Microservicio Friendships")
                                 .version("1.0")
-                                .description("Gestión de amistades entre usuarios de Nico's Games")
+                                .description("Gestión de amistades")
                 );
     }
 }

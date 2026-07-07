@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1/juegos")
 @Tag(
         name = "Juegos",
-        description = "Gestión de videojuegos de la plataforma Nico's Games"
+        description = "Gestión de videojuegos"
 )
 public class JuegoController {
 
@@ -67,7 +67,7 @@ public class JuegoController {
     public ResponseEntity<PagedModel<EntityModel<JuegoResponse>>> getAllByEstudioId(
             @Parameter(description = "ID del estudio")
             @PathVariable Long estudioId,
-            Pageable pageable) {
+            @ParameterObject Pageable pageable) {
 
         log.debug("GET /api/v1/juegos/estudio/{} - página: {} tamaño: {}", estudioId, pageable.getPageNumber(), pageable.getPageSize());
         return ResponseEntity.ok(pagedResourcesAssembler.toModel(juegoService.getAllByEstudioId(estudioId, pageable), juegoAssembler));
@@ -81,7 +81,7 @@ public class JuegoController {
     public ResponseEntity<PagedModel<EntityModel<JuegoResponse>>> getAllByGenerosId(
             @Parameter(description = "ID del género")
             @PathVariable Long generoId,
-            Pageable pageable) {
+            @ParameterObject Pageable pageable) {
 
         log.debug("GET /api/v1/juegos/genero/{} - página: {} tamaño: {}", generoId, pageable.getPageNumber(), pageable.getPageSize());
         return ResponseEntity.ok(pagedResourcesAssembler.toModel(juegoService.getAllByGenerosId(generoId, pageable), juegoAssembler));
@@ -95,7 +95,7 @@ public class JuegoController {
     public ResponseEntity<PagedModel<EntityModel<JuegoResponse>>> getAllByPlataformasId(
             @Parameter(description = "ID de la plataforma")
             @PathVariable Long plataformaId,
-            Pageable pageable) {
+            @ParameterObject Pageable pageable) {
 
         log.debug("GET /api/v1/juegos/plataforma/{} - página: {} tamaño: {}", plataformaId, pageable.getPageNumber(), pageable.getPageSize());
         return ResponseEntity.ok(pagedResourcesAssembler.toModel(juegoService.getAllByPlataformasId(plataformaId, pageable), juegoAssembler));

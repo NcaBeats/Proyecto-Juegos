@@ -15,7 +15,7 @@ public class NotificationOpenApiConfig {
                         new Info()
                                 .title("Microservicio Notifications")
                                 .version("1.0")
-                                .description("Gestión de notificaciones de Nico's Games")
+                                .description("Gestión de notificaciones")
                 );
     }
 }

@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1/profiles")
 @Tag(
         name = "Perfiles",
-        description = "Gestión de perfiles de usuario de la plataforma Nico's Games"
+        description = "Gestión de perfiles de usuario"
 )
 public class ProfileController {
 

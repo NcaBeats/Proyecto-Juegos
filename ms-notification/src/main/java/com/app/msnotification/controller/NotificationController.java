@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/notifications")
 @Tag(
         name = "Notificaciones",
-        description = "Gestión de notificaciones de la plataforma Nico's Games"
+        description = "Gestión de notificaciones"
 )
 public class NotificationController {
 

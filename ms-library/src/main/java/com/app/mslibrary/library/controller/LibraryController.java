@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping("/api/v1/library")
 @Tag(
         name = "Biblioteca",
-        description = "Gestión de bibliotecas de videojuegos de la plataforma Nico's Games"
+        description = "Gestión de biblioteca de juegos"
 )
 public class LibraryController {
 

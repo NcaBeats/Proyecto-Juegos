@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1/generos")
 @Tag(
         name = "Géneros",
-        description = "Gestión de géneros de videojuegos de la plataforma Nico's Games"
+        description = "Gestión de géneros de videojuegos"
 )
 public class GeneroController {
 

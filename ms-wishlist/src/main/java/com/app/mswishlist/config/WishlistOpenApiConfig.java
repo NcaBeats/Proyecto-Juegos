@@ -15,7 +15,7 @@ public class WishlistOpenApiConfig {
                         new Info()
                                 .title("Microservicio Wishlist")
                                 .version("1.0")
-                                .description("Gestión de listas de deseos de Nico's Games")
+                                .description("Gestión de listas de deseos")
                 );
     }
 }

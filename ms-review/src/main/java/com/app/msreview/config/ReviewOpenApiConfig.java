@@ -15,7 +15,7 @@ public class ReviewOpenApiConfig {
                         new Info()
                                 .title("Microservicio Reviews")
                                 .version("1.0")
-                                .description("Gestión de reseñas de videojuegos de Nico's Games")
+                                .description("Gestión de reseñas")
                 );
     }
 }

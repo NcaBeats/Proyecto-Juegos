@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1/estudios")
 @Tag(
         name = "Estudios",
-        description = "Gestión de estudios desarrolladores de videojuegos de la plataforma Nico's Games"
+        description = "Gestión de estudios desarrolladores"
 )
 public class EstudioController {
 
